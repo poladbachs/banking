@@ -1,0 +1,6 @@
+beautifulsoup4
+requests
+camelot-py[cv]
+pandas
+openpyxl
+selenium

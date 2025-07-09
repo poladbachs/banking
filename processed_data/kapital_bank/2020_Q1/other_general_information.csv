@@ -1,0 +1,19 @@
+Kredit riski,Unnamed: 1,Unnamed: 2,Unnamed: 3,Unnamed: 4,Unnamed: 5,Unnamed: 6,Unnamed: 7,Unnamed: 8,Unnamed: 9,Unnamed: 10,Unnamed: 11,Unnamed: 12,Unnamed: 13,Unnamed: 14,Unnamed: 15
+Kredit portfelinin keyfiyyəti,,,,,,,,,,,,,,min manatla,
+Kredit portfelinin sektorlar üzrə bölgüsü,Cəmi,Əsas məbləğ üzrə borc,,,,,,,,,,,,,
+,,Cari,Vaxtı keçmiş günlər,,,,,,,,,,,,
+,,,1-30 gün,31-60 gün,61-90 gün,91-120 gün,121-150 gün,151-180 gün,181-210 gün,211-240 gün,241-270 gün,271-300 gün,301-330 gün,331-365 (366) gün,1 il və  artıq
+"Kredit portfeli, o cümlədən",1821222.49,1726781.41,50621.060000000005,5756.04,2863.83,2115.84,1385.49,1299.54,1292.15,904.64,948.21,1127.77,1120.77,955.72,24050.02
+  -Biznes,433891.57,413529.98000000004,3091.930000000006,16.379999999999768,60.45999999999955,1.4210854715202004e-13,7.283063041541027e-14,0,2.0961010704922955e-13,0,0,0,0,0,17192.82
+  -İstehlak,1334789.91,1262863.39,46580.78,4815.34,2618.3500000000004,2068.75,1383.07,1299.54,1276.3799999999999,904.64,948.21,1127.77,1120.77,955.72,6827.2
+  -Daşınmaz əmlak,52541.00999999999,50388.04,948.35,924.32,185.02,47.09,2.42,0,15.77,0,0,0,0,0,30
+  -Digər kreditlər,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+,,,,,,,,,,,,,,,
+Kreditlərin təminat üzrə bölgüsü,,,,,,,,,,,,,,,
+,,,,,,,,min manatla,,,,,,,
+Kredit portfelinin sektorlar üzrə bölgüsü,Cəmi,Təminatsız,Nağd vəsaitlə təmin olunan,Qızıl təminatlı,Daşınmaz əmlakla təmin olunan,Daşınar əmlakla təmin olunan,Qarantiyalar ilə təmin olunan,Kredit törəmə alətləri ilə təmin olunan,,,,,,,
+"Kredit portfeli, o cümlədən",1821222.49,1541200.0999999996,6354.27,0,116931.56999999999,194382.85,0,0,,,,,,,
+  -Biznes,433891.57,85931.13,13172.24,0,66204.39,194382.89,0,0,,,,,,,
+  -İstehlak,1334789.91,1455268.9699999997,13857.97,0,6067.6900000000005,0,0,0,,,,,,,
+  -Daşınmaz əmlak,52541.00999999999,0,0,0,44659.64,0,0,0,,,,,,,
+  -Digər kreditlər,0,0,0,0,0,0,0,0,,,,,,,
