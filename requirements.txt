@@ -4,3 +4,6 @@ camelot-py[cv]
 pandas
 openpyxl
 selenium
+pdfplumber
+xlrd
+tabula-py

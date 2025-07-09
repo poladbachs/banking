@@ -1,0 +1,16 @@
+,Capital Adequacy Standards (Ratios) Based On Risk-Weighted Assets,
+,,(thousand AZN)
+A. CAPITAL,,
+1.  Tier I capital (fixed capital) (should not be less than 50% of total,,
+,369693,297971
+regulatory capital),,
+2.Deductions from Tier I capital,3467,23476
+3. Tier I capital after deductions (row 1 less row 2),22491,274495
+4. Tier II capital (should not exceed the amount of tier I capital),34748,274495
+5. Total Regulatory Capital  )(3+4),9785,548990
+6. Deductions from total regulatory capital:,50800,9850
+7. Total Regulatory capital after deductions  (5-6),44168,539140
+"8. Net risk-weighted assets (from Table A15, row E)",2,2617422
+,Norm,Actual
+9. Tier I capital adequacy ratio (row 3: row 8) x 100%,"6,00%","10,49%"
+10. Total Regulatory capital adequacy ratio (row 7: row 8) x 100%,"11,00%","20,60%"

@@ -1,0 +1,42 @@
+,Maliyyə vəziyyəti haqqında hesabat,,,
+,,,,min manatla
+,,Hesabat dövrü,Keçən ilin müvafiq dövrü,
+,,31/12/2024,31/12/2023,
+1.00,Aktivlər:,"11,372,270",,"8,659,626"
+1.10,"Nağd pul vəsaitləri və  ekvivalentləri, o cümlədən bloklaşdırılmış nağd vəsait","2,716,709",,"2,216,109"
+1.20,"Ticarət və investisiya qiymətli kağızları , Əks-repo","3,110,743",,"1,587,437"
+1.30,Banklar və digər maliyyə institutlarındakı depozitlər,"40,952",,"290,852"
+1.40,Banklar və digər maliyyə institutlarına verilən kreditlər,"24,556",,"23,416"
+1.50 Müştərilərə verilmiş kreditlər,,"5,211,208",,"4,271,823"
+1.5.1,a) istehlak kreditləri,"2,939,440",,"2,353,575"
+1.5.2,b) biznes kreditləri,"1,666,458",,"1,349,734"
+1.5.3,c) daşınmaz əmlak kreditləri,"605,309",,"568,513"
+1.5.4,d) digər kreditlər,0,,0
+1.5.5,(Mümkün zərərlər üçün yaradılan məqsədli ehtiyat),"-590,952",,"-460,114"
+1.5.6 Müştərilərə verilmiş kreditlər (xalis),,"4,620,255",,"3,811,709"
+1.60,Əmlak və avadanlıqlar,"91,763",,"82,784"
+1.70,Qeyri-maddi aktivlər,"35,702",,"30,254"
+1.80,Təxirə salınmış mənfəət vergisi aktivi,"49,735",,0
+1.81,İnvestisiyalar və maliyyə iştirakı (xalis),"148,504",,"74,554"
+1.90,Balansdankənar aktivlər üzrə mümkün zərərlərin ödənilməsi üçün məqsədli ehtiyat,"-2,528",,"-5,343"
+1.10,Digər aktivlər,"535,879",,"547,854"
+2.00,Öhdəliklər:,"10,444,327",,"7,748,330"
+2.10,Depozitlər,"8,978,334",,"6,321,619"
+2.1.1,a) fiziki şəxslərin depozitləri,"2,594,191",,"1,906,205"
+2.1.2,b) hüquqi şəxslərin depozitləri,"6,384,144",,"4,415,415"
+2.20 Mərkəzi bank və dövlət fondları qarşısında öhdəliklər,,0,,540
+2.30,Kredit təşkilatları və digər maliyyə institutları qarşısında öhdəliklər,"598,967",,"1,036,581"
+2.40,Borc qiymətli kağızları,"100,000",,0
+2.50,Cari vergi öhdəlikləri,"16,269",,"14,977"
+2.60,Təxirə salınmış vergi öhdəliyi,0,,0
+2.70,Subordinasiya borc öhdəlikləri,"263,500",,"59,500"
+2.80,Digər öhdəliklər,"487,257",,"315,112"
+3.00,Kapital:,"927,943",,"911,296"
+3.10,Səhmdar kapitalı,"265,850",,"265,850"
+3.20,Səhmin qiymətinin dəyişməsindən gəlir (zərər),800,,800
+3.30,Bölüşdürülməmiş mənfəət,"599,314",,"588,925"
+3.40,Ümumi ehtiyatlar:,"61,979",,"55,721"
+3.4.1,"a) kreditlər, lizinqlər və digər tələblər üzrə mümkün zərərlərin ödənilməsi üçün adi ehtiyatlar","52,619",,"46,636"
+3.4.2,b) əsas vəsaitlərin və qiymətli kağızların qiymətləndirilməsindən adi ehtiyatlar,"9,360",,"9,085"
+3.4.3,c) digər ümumi ehtiyatlar,0,,0
+4.00,Cəmi öhdəliklər və kapital,"11,372,270",,"8,659,626"

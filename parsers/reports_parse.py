@@ -1,51 +1,87 @@
 import os
 import pandas as pd
+
+import tabula
 import camelot
-from glob import glob
+import pdfplumber
 
-RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw_data')
-PROCESSED_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'processed_data')
-os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
+RAW_ROOT = "raw_data/kapital_bank"
+PROCESSED_ROOT = "processed_data/kapital_bank"
 
-def process_pdf(pdf_path, out_csv):
-    try:
-        tables = camelot.read_pdf(pdf_path, pages='all', flavor='stream')
-        if tables and len(tables) > 0:
-            tables[0].to_csv(out_csv, index=False)
-            print(f"  ✔ PDF extracted: {os.path.basename(pdf_path)} → {os.path.basename(out_csv)}")
-        else:
-            print(f"  ✘ No tables found in PDF: {os.path.basename(pdf_path)}")
-    except Exception as e:
-        print(f"  ✘ PDF error [{pdf_path}]: {e}")
+for root, dirs, files in os.walk(RAW_ROOT):
+    for fname in files:
+        ext = os.path.splitext(fname)[1].lower()
+        full_path = os.path.join(root, fname)
+        rel_path = os.path.relpath(root, RAW_ROOT)
+        out_folder = os.path.join(PROCESSED_ROOT, rel_path)
+        os.makedirs(out_folder, exist_ok=True)
+        base = os.path.splitext(fname)[0]
 
-def process_excel(excel_path, out_csv):
-    try:
-        df = pd.read_excel(excel_path)
-        df.to_csv(out_csv, index=False)
-        print(f"  ✔ Excel extracted: {os.path.basename(excel_path)} → {os.path.basename(out_csv)}")
-    except Exception as e:
-        print(f"  ✘ Excel error [{excel_path}]: {e}")
+        if ext == ".pdf":
+            print(f"[PDF] {full_path}")
+            # Tabula-py (lattice)
+            try:
+                tables = tabula.read_pdf(full_path, pages="all", multiple_tables=True, lattice=True)
+                for idx, df in enumerate(tables):
+                    if not df.empty:
+                        out_csv = os.path.join(out_folder, f"{base}_tabula_lattice_table{idx+1}.csv")
+                        df.to_csv(out_csv, index=False)
+            except Exception as e:
+                print(f"   Tabula lattice ERROR: {e}")
 
-def main():
-    for bank_dir in glob(os.path.join(RAW_DATA_DIR, '*')):
-        if not os.path.isdir(bank_dir):
-            continue
-        bank_name = os.path.basename(bank_dir)
-        for quarter_dir in glob(os.path.join(bank_dir, '*_*')):
-            quarter = os.path.basename(quarter_dir)
-            output_dir = os.path.join(PROCESSED_DATA_DIR, bank_name, quarter)
-            os.makedirs(output_dir, exist_ok=True)
-            for fname in os.listdir(quarter_dir):
-                in_path = os.path.join(quarter_dir, fname)
-                report_base, ext = os.path.splitext(fname)
-                out_csv = os.path.join(output_dir, report_base + '.csv')
-                ext = ext.lower()
-                if ext == '.pdf':
-                    process_pdf(in_path, out_csv)
-                elif ext in ('.xlsx', '.xls', '.csv'):
-                    process_excel(in_path, out_csv)
-                else:
-                    print(f"  Skipping unknown file: {fname}")
+            # Tabula-py (stream)
+            try:
+                tables = tabula.read_pdf(full_path, pages="all", multiple_tables=True, stream=True)
+                for idx, df in enumerate(tables):
+                    if not df.empty:
+                        out_csv = os.path.join(out_folder, f"{base}_tabula_stream_table{idx+1}.csv")
+                        df.to_csv(out_csv, index=False)
+            except Exception as e:
+                print(f"   Tabula stream ERROR: {e}")
 
-if __name__ == "__main__":
-    main()
+            # Camelot (lattice)
+            try:
+                tables = camelot.read_pdf(full_path, pages="all", flavor="lattice")
+                for idx, table in enumerate(tables):
+                    df = table.df
+                    out_csv = os.path.join(out_folder, f"{base}_camelot_lattice_table{idx+1}.csv")
+                    df.to_csv(out_csv, index=False, header=False)
+            except Exception as e:
+                print(f"   Camelot lattice ERROR: {e}")
+
+            # Camelot (stream)
+            try:
+                tables = camelot.read_pdf(full_path, pages="all", flavor="stream")
+                for idx, table in enumerate(tables):
+                    df = table.df
+                    out_csv = os.path.join(out_folder, f"{base}_camelot_stream_table{idx+1}.csv")
+                    df.to_csv(out_csv, index=False, header=False)
+            except Exception as e:
+                print(f"   Camelot stream ERROR: {e}")
+
+            # pdfplumber (bonus: all tables on all pages, but structure may be poor)
+            try:
+                with pdfplumber.open(full_path) as pdf:
+                    for page_num, page in enumerate(pdf.pages, 1):
+                        tables = page.extract_tables()
+                        for idx, table in enumerate(tables):
+                            df = pd.DataFrame(table)
+                            out_csv = os.path.join(out_folder, f"{base}_plumber_page{page_num}_table{idx+1}.csv")
+                            df.to_csv(out_csv, index=False, header=False)
+            except Exception as e:
+                print(f"   pdfplumber ERROR: {e}")
+
+        elif ext in [".xlsx", ".xls"]:
+            print(f"[EXCEL] {full_path}")
+            try:
+                xl = pd.ExcelFile(full_path)
+                for sheet in xl.sheet_names:
+                    df = xl.parse(sheet)
+                    safe_sheet = sheet.replace(" ", "_").replace("/", "_")
+                    out_csv = os.path.join(out_folder, f"{base}_{safe_sheet}.csv")
+                    df.to_csv(out_csv, index=False)
+            except Exception as e:
+                print(f"   Excel ERROR: {e}")
+
+print("\nDONE! All PDFs and Excels processed into processed_data/kapital_bank/[...].\n")
+print("For each PDF, check all *_table*.csv files and pick the most accurate for your needs.")

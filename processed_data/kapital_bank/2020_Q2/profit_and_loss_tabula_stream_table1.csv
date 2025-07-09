@@ -1,0 +1,34 @@
+Unnamed: 0,Unnamed: 1,Mənfəət və zərər,Unnamed: 2,Unnamed: 3
+,,,,Keçən ilin müvafiq
+,,,Cari dövr,
+,proLosStatem,,,dövrü
+,,,30.06.2020,
+,,,,30.06.2020
+1,Faiz gəlirləri:,,215843,189925
+1F.a1i,Müştərilərə verilmiş kreditlər,,184917,154759
+M1.2ü,Banklar və digər maliyyə institutlarına verilən kreditlər üzrə faiz gəlirləri,,430,68
+B1.a3n,Banklar və digər maliyyə institutlarındakı depozitlər üzrə faiz gəlirləri,,13183,13051
+B1.a4n,Ticarət və investisiya qiymətli kağızları üzrə faiz gəlirləri,,12598,18105
+T1i.c5a,Digər faiz gəlirləri,,4715,3942
+2Di g,Faiz xərcləri:,,23987,31999
+F2.a1i,Depozitlər üzrə faizlər,,21783,30496
+D2.e2p,Mərkəzi bank və dövlət fondları qarşısında öhdəliklər üzrə faiz xərcləri,,1,0
+M2.3ə,Cəlb edilmiş kreditlərə görə ödənilən faizlər,,1060,1415
+2C.ə4l,Pul bazarı alətlərinə ödənilən faizlər,,0,0
+P2.u5l,Qiymətli kağızlar üzrə faizlər,,0,0
+2Q.6iy,,Digər faiz xərcləri,1144,88
+3,Xalis faiz gəliri(zərəri),,191856,157926
+4,Qeyri-faiz gəlirləri:,,100950,76137
+4.1,Alınan haqq və kommisiya gəliri,,89947,63901
+4A.l2ın,Xarici valyutadan gəlir/zərər (məzənnə dəyişməsi daxil olmaqla,,9773,10103
+X4.a3r i,Qiymətli kağızların satışından və yenidən qiymətləndirilməsindən gəlir/zərər,,0,0
+4Q.4iy,,Digər gəlirlər,1230,2133
+5,Qeyri-faiz xərcləri:,,127128,96632
+5.1,Əmək haqqı və digər kompensiya növləri üzrə xərclər,,70012,49844
+5.2,Ümumi və inzibati xərclər,,12718,10092
+5Ü.m3,Amortizasiya xərcləri,,8771,7727
+5A.m4,Digər xərclər,,35627,28969
+D6i g,(Mümkün zərərlər üçün yaradılan məqsədli ehtiyatlar),,-38036,44571
+7(M,Mənfəət vergisindən əvvəlki mənfəət(zərər),,203713,92859
+M8,Mənfəət vergisi,,33158,19667
+9M,Dövr üzrə xalis mənfəət,,170556,73192

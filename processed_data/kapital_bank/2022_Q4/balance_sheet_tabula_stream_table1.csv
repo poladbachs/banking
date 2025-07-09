@@ -1,0 +1,41 @@
+Unnamed: 0,Unnamed: 1,Unnamed: 2,Hesabat,Keçən ilin
+,,finSitStatem,,
+,,,dövrü,müvafiq dövrü
+,,,31.12.2022,31.12.2021
+"1,00",Aktivlər:,,7.822.172,6.709.523
+"1,10","Nağd pul vəsaitləri və  ekvivalentləri, o cümlədən bloklaşdırılmış nağd vəsait",,1.623.495,2.505.811
+"1,20",Ticarət və investisiya qiymətli kağızları,,2.475.055,1.113.589
+"1,30",Banklar və digər maliyyə institutlarındakı depozitlər,,438.165,389.857
+"1,40",Banklar və digər maliyyə institutlarına verilən kreditlər,,69.329,70.190
+"1,50",Müştərilərə verilmiş kreditlər,,3.157.769,2.652.560
+1.5.1,a) istehlak kreditləri,,1.833.106,1.602.384
+1.5.2,b) biznes kreditləri,,908.342,759.207
+1.5.3,c) daşınmaz əmlak kreditləri,,416.321,290.970
+1.5.4,d) digər kreditlər,,0,0
+1.5.5,(Mümkün zərərlər üçün yaradılan məqsədli ehtiyat),,-368.193,-371.475
+1.5.6,Müştərilərə verilmiş kreditlər (xalis),,2.789.577,2.281.085
+"1,60",Əmlak və avadanlıqlar,,71.736,62.973
+"1,70",Qeyri-maddi aktivlər,,26.867,26.280
+"1,80",Təxirə salınmış vergi aktivləri,,49.312,6.899
+"1,90",Balansdankənar aktivlər üzrə mümkün zərərlərin ödənilməsi üçün məqsədli ehtiyat,,-4.909,-22.756
+1.10,Digər aktivlər,,283.545,275.596
+"2,00",Öhdəliklər:,,6.995.519,6.061.327
+"2,10",Depozitlər,,6.098.626,5.192.419
+2.1.1,a) fiziki şəxslərin depozitləri,,1.642.452,1.164.558
+2.1.2,b) hüquqi şəxslərin depozitləri,,4.456.174,4.027.861
+"2,20",Mərkəzi bank və dövlət fondları qarşısında öhdəliklər,,1.080,1.620
+"2,30",Kredit təşkilatları və digər maliyyə institutları qarşısında öhdəliklər,,554.942,434.962
+"2,40",Borc qiymətli kağızları,,0,0
+"2,50",Cari vergi öhdəlikləri,,12.901,8.531
+"2,60",Təxirə salınmış vergi öhdəliyi,,0,0
+"2,70",Subordinasiya borc öhdəlikləri,,68.000,59.500
+"2,80",Digər öhdəliklər,,259.970,364.295
+"3,00",Kapital:,,826.654,648.196
+"3,10",Səhmdar kapitalı,,265.850,245.850
+"3,20",Səhmin qiymətinin dəyişməsindən gəlir (zərər),,800,800
+"3,30",Bölüşdürülməmiş mənfəət,,517.817,363.045
+"3,40",Ümumi ehtiyatlar:,,42.187,38.501
+3.4.1,"a) kreditlər, lizinqlər və digər tələblər üzrə mümkün zərərlərin ödənilməsi üçün adi ehtiyatlar",,34.167,30.226
+3.4.2,b) əsas vəsaitlərin qiymətləndirilməsindən adi ehtiyatlar,,1.338,1.435
+3.4.3,c) digər ümumi ehtiyatlar,,6.681,6.840
+"4,00",Cəmi öhdəliklər və kapital,,7.822.172,6.709.523

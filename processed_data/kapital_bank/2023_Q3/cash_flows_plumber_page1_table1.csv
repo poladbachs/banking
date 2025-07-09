@@ -1,0 +1,48 @@
+,,Cari hesabat,Əvvəlki
+,,30/09/2023,30/09/2022
+1,Əməliyyat fəaliyyəti ilə əlaqədar pul vəsaitlərinin hərəkəti,,
+1.1,Alınmış faizlər,"521,246","425,098"
+1.2,Ödənilmiş faizlər,"-77,865","-63,597"
+1.3,Alınmış haqq və kommisiyalar,"298,361","244,285"
+1.4,Ödənilmiş haqq və kommisiyalar,"-149,319","-88,237"
+1.5,Xarici valyuta əməliyyatlarından xalis gəlir,"31,820","32,342"
+1.6,Xarici valyutada törəmə maliyyə alətlərindən realizasiya olunmuş xalis gəlir,-157536,-87058
+1.7,Ödənilmiş əmək haqqı və digər kompensasiyalar,2454,3431
+1.8,Ödənilmiş ümumi və inzibati xərclər,"-124,080","-129,469"
+1.9,Ümidsiz borclardan daxilolmalar,0,0
+1.1,Alınmış digər əməliyyat gəlirləri,0,0
+1.11,Ödənilmiş digər əməliyyat xərcləri,0,0
+2,Əməliyyat aktivlərində və öhdəliklərində dəyişikliklərdən əvvəl bank fəaliyyəti,,
+2.1,Əməliyyat aktivlərindən xalis artım/azalma,"-1,130,328","-1,304,987"
+2.1.1,Banklara verilmiş kreditlərdə və depozitlərdə xalis artım (azalma),-132525,"-438,328"
+2.1.2,Müştərilərə verilmiş kreditlərdə xalis artım (azalma),"-759,025","-627,076"
+2.1.3,Digər aktivlərdə xalis artım (azalma),"-238,778","-239,583"
+2.2,Əməliyyat öhdəliklərindən xalis artım/azalma,"388,795","927,497"
+2.2.1,Banklardan və digər maliyyə təşkilatlarından cəlb olunan depozitlər üzrə xalis artım,"58,825","75,585"
+2.2.2,Mərkəzi Bank üzrə öhdəliklırdə xalis artım (azalma),0,0
+2.2.3,Müştərilərin depozitləri və cari hesablarında xalis artım (azalma),"388,476","995,063"
+2.2.4,Digər öhdəliklərdəxalis artım (azalma),"-58,506","-143,151"
+3,Mənfəət vergisindən əvvəl bank fəaliyyəti üzrə pul vəsaitlərinin hərəkəti,"-396,452","-40,695"
+3.1,Ödənilmiş mənfəət vergisi,"-106,063","-20,500"
+4,Əməliyyat fəaliyyəti ilə əlaqədar generasiya/istifadə edilən xalis pul vəsaitləri,"-502,515","-61,195"
+5,İnvestisiya fəaliyyəti ilə əlaqədar pul vəsaitlərinin hərəkəti,,
+5.1,Əmlak və avadanlıqların alınması və avans ödənişləri,"-25,507","-24,665"
+5.2,Əmlak və avadanlıqların satılmasından daxilolmalar,151,404
+5.3,Qeyri-maddi aktivlərin alınması,"-8,917","-7,754"
+5.4,Qeyri-maddi aktivlərin satılmasından daxilolmalar,0,0
+5.5,Alınmış dividendlər,0,0
+5.6,Satış üçün nəzərdə tutulan investisiya qiymətli kağızlarının satılması və geri alınması,"689,677","-821,075"
+5.7,Digər,"-31,732","-22,400"
+6,İnvestisiya fəaliyyəti ilə əlaqədar generasiya/istifadə olunan pul vəsaitlərinin,"623,672","-875,490"
+7,Maliyyələşdirmə fəaliyyəti ilə əlaqədar pul vəsaitlərinin hərəkəti,,
+7.1,Digər borc öhdəliklərinin əldə olunması,0,0
+7.2,Digər borc öhdəliklərinin ödənilməsi,0,0
+7.3,Subordinasiya borclarının əldə olunması,0,0
+7.4,Səhmdar kapitalının buraxılmasından daxilolmalar,0,0
+7.5,Ödənilmiş dividentlər,"-153,990","-137,948"
+7.6,Digər maliyyə öhdəliklərinin cəlb edilməsi (ödənilməsi),0,0
+8,Maliyyələşdirmə fəaliyyəti ilə əlaqədar yaradılan/istifadə olunan pul vəsaitləri,"-153,990","-137,948"
+9,Dövrün əvvəlinə pul vəsaitləri və pul vəsaitlərinin ekvivalentləri,"1,559,169","2,740,198"
+10,Pul vəsaitləri və pul vəsaitlərinin ekvivalentlərində xalis artma/(azalma),"-34,668","-1,076,944"
+11,Məzənnə dəyişikliyinin pul vəsaitləri və pul vəsaitlərinin ekvivalentlərinə təsiri,-1835,-2311
+12,Dövrün sonuna pul vəsaitləri və pul vəsaitlərinin ekvivalentləri,"1,524,501","1,663,254"

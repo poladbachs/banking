@@ -1,0 +1,55 @@
+Unnamed: 0,Pul vəsaitlərinin hərəkəti haqqında hesabat,Unnamed: 1
+,,min manatla
+,Cari hesabat dövrü,Əvvəlki hesabat dövrü
+,30.06.2020,30.06.2020
+1.00,Əməliyyat fəaliyyəti ilə əlaqədar pul vəsaitlərinin hərəkəti,
+1.10,"Alınmış faizlər 197,386","178,310"
+1.20,Ödənilmiş faizlər -38982,-28076
+1.30,Alınmış haqq və kommisiyalar 76685,69393
+1.40,Ödənilmiş haqq və kommisiyalar -18512,-10456
+1.50,Xarici valyuta əməliyyatlarından xalis gəlir 9982,10003
+1.60,Xarici valyutada törəmə maliyyə alətlərindən realizasiya olunmuş xalis gəlir 0,0
+1.70,Ödənilmiş əmək haqqı və digər kompensasiyalar -71681,-47936
+1.80,Ödənilmiş ümumi və inzibati xərclər -36943,-29716
+1.90,Ümidsiz borclardan daxilolmalar 0,0
+1.10,Alınmış digər əməliyyat gəlirləri 1229,2100
+1.11,Ödənilmiş digər əməliyyat xərcləri 0,0
+,Əməliyyat aktivlərində və öhdəliklərində dəyişikliklərdən əvvəl bank fəaliyyəti 119164,143622
+2,,
+,üzrə pul vəsaitlərinin hərəkəti,
+2.10,Əməliyyat aktivlərindən xalis artım/azalma -631369,-152546
+2.1.1,Banklara verilmiş kreditlərdə  və depozitlərdə xalis artım (azalma) -69950,55226
+2.1.2,Müştərilərə verilmiş kreditlərdə xalis artım (azalma) -338702,-148513
+2.1.3,Digər aktivlərdə xalis artım (azalma) -222717,"-59,259"
+2.20,"Əməliyyat öhdəliklərindən xalis artım/azalma 618,244",-82444
+2.2.1,"Banklardan və digər maliyyə təşkilatlarından cəlb olunan depozitlər üzrə xalis 202,696","-13,602"
+,artım (azalma),
+2.2.2,Mərkəzi Bank üzrə öhdəliklırdə xalis artım (azalma) 0,0
+2.2.3,"Müştərilərin depozitləri və cari hesablarında xalis artım (azalma) 390,452",-82279
+2.2.4,Digər öhdəliklərdəxalis artım (azalma) 25096,"13,437"
+3.00,Mənfəət vergisindən əvvəl bank fəaliyyəti üzrə pul vəsaitlərinin hərəkəti 106039,-91368
+3.10,Ödənilmiş mənfəət vergisi -3000,-58800
+,Əməliyyat fəaliyyəti ilə əlaqədar generasiya/istifadə edilən xalis pul vəsaitləri 103039,-150168
+4.00,,
+5.00,İnvestisiya fəaliyyəti ilə əlaqədar pul vəsaitlərinin hərəkəti,
+5.10,Əmlak və avadanlıqların alınması və avans ödənişləri -4753,-5017
+5.20,Əmlak və avadanlıqların satılmasından daxilolmalar 1,34
+5.30,Qeyri-maddi aktivlərin alınması -4020,-4045
+5.40,Qeyri-maddi aktivlərin satılmasından daxilolmalar 0,0
+5.50,Alınmış dividendlər 0,0
+5.60,Satış üçün nəzərdə tutulan investisiya qiymətli kağızlarının satılması və geri -36601,-372930
+5.70,Digər -2250,0
+D6ig.ə0r0,İnvestisiya fəaliyyəti ilə əlaqədar generasiya/istifadə olunan pul vəsaitlərinin -47623,-381958
+,hərəkəti,
+7.00,Maliyyələşdirmə fəaliyyəti ilə əlaqədar pul vəsaitlərinin hərəkəti,
+7.10,Digər borc öhdəliklərinin əldə olunması 0,0
+7.20,Digər borc öhdəliklərinin ödənilməsi 0,0
+7.30,Subordinasiya borclarının əldə olunması 0,0
+7.40,Subordinasiya borclarının ödənilməsi 0,0
+7.50,Səhmdar kapitalının buraxılmasından daxilolmalar 0,0
+7.60,Digər maliyyə öhdəliklərinin cəlb edilməsi (ödənilməsi) -76500,-82463
+8.00,Maliyyələşdirmə fəaliyyəti ilə əlaqədar yaradılan/istifadə olunan pul vəsaitləri -76500,-82463
+9.00,Dövrün əvvəlinə pul vəsaitləri və pul vəsaitlərinin ekvivalentləri 1772007,1714991
+10.00,Pul vəsaitləri və pul vəsaitlərinin ekvivalentlərində xalis artma/(azalma) -22255,-615452
+11.00,Məzənnə dəyişikliyinin pul vəsaitləri və pul vəsaitlərinin ekvivalentlərinə təsiri -1171,-863
+12.00,Dövrün sonuna pul vəsaitləri və pul vəsaitlərinin ekvivalentləri 1749752,1099539

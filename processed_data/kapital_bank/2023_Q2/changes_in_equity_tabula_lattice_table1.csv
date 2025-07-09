@@ -1,0 +1,21 @@
+Kapital Dəyişmələri,Unnamed: 0,İlin əvvəlinə qalıq,"Mərkəzi Bankagöndərilmişdəqiqləşdirilmişkumulyativdüzəlişlər","Müddət ərzindədəyişikliklər","Müddətin sonunaqalıq"
+1,2,3,4,5,6
+1. Adi Səhmlər,1,205850,0,0,205850
+2. Müddətsiz İmtiyazlı Səhmlər,2,60000,0,0,60000
+3. Geriyə alınmış adi səhmlər,3,0,0,0,0
+4. Geriyə alınmış müddətsiz imtiyazlı səhm,ər4,0,0,0,0
+5. Adi səhmlərin nominal və bazar qiymətlə,i aras5ındakı,fərq800,0,0,800
+6. Müddətsiz İmtiyazlı səhmlərin nominal v,baza6r qiy,ətləri arasındakı fərq0,0,0,0
+7. Dividendlər,7,X,X,157400,157400
+"a) ödənilmiş adi səhmlər üzrə elanolunmuş dividendlər",7a,X,X,148400,148400
+"b) ödənilmiş müddətsiz imtiyazlısəhmlər üzrə elan olunmuş dividendlər",7b,X,X,9000,9000
+8. Bölüşdürülməmiş xalis mənfəət (zərər),8,517817,0,-10709,507108
+a) Əvvəlki illərin xalis mənfəəti (zərəri,8a,497747,0,-157400,340347
+b) Cari ilin xalis mənfəət (zərəri),8b,X,X,146691,146691
+c) Kapital ehtiyatları,8c,20070,0,0,20070
+9. Ümumi ehtiyatlar,9,42186,0,7414,49601
+"a) kreditlərdən və banklararasıtələblər üzrə mümkün zərərlərinödənilməsi üçün adi ehtiyatlar",9a,21797,0,2496,24294
+"b) digər aktivlərdən olan mümkünzərərlərin ödənilməsi üçün adiehtiyatlar",9b,12370,0,4019,16389
+"c) əsas vəsaitlərin yenidənqiymətləndirilməsi",9c,1338,0,727,2065
+d) digər ümumi ehtiyatlar,9d,6681,0,173,6854
+10. Cəmi kapital,10,826653,0,-3294,823359

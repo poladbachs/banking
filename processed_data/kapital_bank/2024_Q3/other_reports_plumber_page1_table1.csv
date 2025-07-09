@@ -1,0 +1,45 @@
+,,Hesabat dövrü,Keçən ilin müvafiq dövrü
+,,30/9/2024,30/9/2023
+1.00,Aktivlər:,"10,277,304","8,459,440"
+1.10,"Nağd pul vəsaitləri və ekvivalentləri, o cümlədən
+bloklaşdırılmış nağd vəsait","2,348,428","1,492,533"
+1.20,"Ticarət və investisiya qiymətli kağızları , Əks-repo","2,296,323","2,211,880"
+1.30,Banklar və digər maliyyə institutlarındakı depozitlər,"177,620","765,286"
+1.40,Banklar və digər maliyyə institutlarına verilən kreditlər,"23,597","28,026"
+1.50,Müştərilərə verilmiş kreditlər,"5,114,906","3,916,565"
+1.5.1,a) istehlak kreditləri,"2,815,683","2,148,372"
+1.5.2,b) biznes kreditləri,"1,689,217","1,229,189"
+1.5.3,c) daşınmaz əmlak kreditləri,"610,006","539,004"
+1.5.4,d) digər kreditlər,0,0
+1.5.5,(Mümkün zərərlər üçün yaradılan məqsədli ehtiyat),"-542,548","-430,879"
+1.5.6,Müştərilərə verilmiş kreditlər (xalis),"4,572,358","3,485,686"
+1.60,Əmlak və avadanlıqlar,"87,419","78,884"
+1.70,Qeyri-maddi aktivlər,"34,779","25,960"
+1.80,Təxirə salınmış vergi aktivləri,"71,380","47,255"
+1.81,İnvestisiyalar və maliyyə iştirakı (xalis),"139,574","74,554"
+1.90,"Balansdankənar aktivlər üzrə mümkün zərərlərin
+ödənilməsi üçün məqsədli ehtiyat","-2,128","-5,124"
+1.10,Digər aktivlər,"527,956","254,499"
+2.00,Öhdəliklər:,"9,370,928","7,605,497"
+2.10,Depozitlər,"7,937,697","6,483,096"
+2.1.1,a) fiziki şəxslərin depozitləri,"2,585,179","1,860,665"
+2.1.2,b) hüquqi şəxslərin depozitləri,"5,352,518","4,622,430"
+2.20,Mərkəzi bank və dövlət fondları qarşısında öhdəliklər,540,"1,080"
+2.30,"Kredit təşkilatları və digər maliyyə institutları qarşısında
+öhdəliklər","720,590","767,122"
+2.40,Borc qiymətli kağızları,"100,000",0
+2.50,Cari vergi öhdəlikləri,"14,848","11,561"
+2.60,Təxirə salınmış vergi öhdəliyi,0,0
+2.70,Subordinasiya borc öhdəlikləri,"229,500","59,500"
+2.80,Digər öhdəliklər,"367,753","283,139"
+3.00,Kapital:,"906,376","853,943"
+3.10,Səhmdar kapitalı,"265,850","265,850"
+3.20,Səhmin qiymətinin dəyişməsindən gəlir (zərər),800,800
+3.30,Bölüşdürülməmiş mənfəət,"578,886","528,729"
+3.40,Ümumi ehtiyatlar:,"60,840","58,564"
+3.4.1,"a) kreditlər, lizinqlər və digər tələblər üzrə mümkün
+zərərlərin ödənilməsi üçün adi ehtiyatlar","32,143","49,478"
+3.4.2,"b) əsas vəsaitlərin və qiymətli kağızların
+qiymətləndirilməsindən adi ehtiyatlar","7,020","2,065"
+3.4.3,c) digər ümumi ehtiyatlar,"21,676","7,020"
+4.00,Cəmi öhdəliklər və kapital,"10,277,304","8,459,440"

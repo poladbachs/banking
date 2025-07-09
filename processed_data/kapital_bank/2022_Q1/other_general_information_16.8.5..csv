@@ -1,0 +1,55 @@
+"Balansdankənar öhdəliklərin ayrı ayrı növləri barədə
+  ",Unnamed: 1,Unnamed: 2
+(min manatla),,
+,sumLiabManat,sumLiabForeignCur
+ÖHDƏLİKLƏR,Cəmi,Xarici valyutada (2-ci sütundan)
+"1. Kredit alətləri, cəmi",866441.8799999999,35706.21
+a) Kredit öhdəlikləri,0,0
+b) İstifadə olunmamış kredit xətləri,866441.8799999999,35706.21
+"c) Qiymətli kağızlar və xarici valyuta istisna olmaqla, aktivlərin alınması üzrə öhdəliklər",0,0
+d) Digər öhdəliklər,1613.2,0
+"2. Qarantiyalar və bu qəbildən olan öhdəliklər, cəmi",543327.37,155167.93000000002
+a) Qarantiyalar,543327.37,155167.93000000002
+b) Bu qəbildən olan digər öhdəliklər,0,0
+"3. Akkreditivlər, cəmi",23411.43,9316.06
+"a) ""Standby"" akkreditivlər",0,0
+b) Sənədli akkreditivlər,23411.43,9316.06
+"4. Xarici valyuta müqavilələri üzrə təəhhüdlər, cəmi",17000,17000
+a) Spot müqavilələri əsasında ,17000,17000
+a1) alqı,0,0
+a2) satqı,10200,10200
+5. Törəmə maliyyə alətləri üzrə təəhhüdlər,137500,137500
+a) Forvard və fyuçers müqavilələri əsasında ,0,0
+a1) alqı,0,0
+a2) satqı,0,0
+b) Svop müqavilələri əsasında,137500,137500
+b1) alqı,27200,27200
+b2) satqı,110300,110300
+    c) Opsion müqavilələri əsasında,0,0
+c1) alqı,0,0
+c2) satqı,0,0
+d) Digər törəmə maliyyə alətləri əsasında,0,0
+d1) alqı,0,0
+d2) satqı,0,0
+6. Qiymətli kağızlar alınması/satılması üzrə təəhhüdlər,0,0
+a) alqı,0,0
+b) satqı,0,0
+7. Digər maliyyə alətlərinin və ya əmtəələrin alınması/satılması üzrə təəhhüdlər,0,0
+a) alqı,0,0
+b) satqı,0,0
+8. Digər balansdankənar öhdəliklər,0,0
+,,
+,,(min manatla)
+,sumLiabManat,sumLiabForeignCur
+MADDƏLƏR,Cəmi,Xarici valyutada (2-ci sütundan)
+1. Alınmış qarantiyalar və bu qəbildən olan maddələr,0,0
+a) Qarantiyalar,0,0
+b) Bu qəbildən olan digər maddələr,0,0
+2. İxrac akkreditivləri,0,0
+3. Silinmiş aktivlər,100336.28000000001,16384.79
+a) Balansdan silinmiş ümidsiz kreditlərin əsas məbləği,62746.5,7442.900000000001
+b) Balansdan silinmiş ümidsiz  kreditlərin faiz borcları,28035.510000000002,8941.14
+c) Balansdan silinmiş digər ümidsiz aktivlərin əsas məbləği ,9554.27,0.75
+d) Balansdan silinmiş digər ümidsiz aktivlərin faiz borcları,0,0
+4. Ayrılmış kredit xətləri və kreditlər üzrə şərti tələblər,0,0
+5. Digər şərti tələblər (memorandum hesabları nəzərə alınmır),0,0
