@@ -6,24 +6,40 @@ import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from collections import defaultdict
+import sys
+from urllib.parse import unquote, urlparse
+
+# Ensure terminal print supports unicode (for macOS and Python 3.7+)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 BASE_URL = "https://www.kapitalbank.az/reports"
 RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw_data', 'kapital_bank')
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
 
-def slugify(text):
-    return re.sub(r'[\W_]+', '_', text).lower()
+AZ_TO_EN = {
+    "Mənfəət və zərər": "profit_and_loss",
+    "Pul vəsaitlərinin hərəkəti": "cash_flows",
+    "Kapital dəyişmələri": "changes_in_equity",
+    "Kapital adekvatlığı": "capital_adequacy",
+    "Ödəniş müddətlərinin bölgüsü barədə məlumat": "payment_terms",
+    "Digər ümumi məlumatlar": "other_general_info",
+    "Balans hesabatı": "balance_sheet"
+}
 
 def is_real_pdf(r):
-    # 1. Status check
     if r.status_code != 200:
         return False
-    # 2. Header check
     ctype = r.headers.get('Content-Type', '').lower()
     if not (ctype.startswith('application/pdf') or ctype.startswith('application/octet-stream')):
         return False
-    # 3. Magic bytes check
     return r.content[:5] == b'%PDF-'
+
+def clean_for_header(val):
+    # Only allow latin-1 chars for HTTP headers/cookies (per HTTP/1.x spec)
+    if isinstance(val, str):
+        return val.encode("latin-1", "ignore").decode("latin-1")
+    return val
 
 def main():
     options = uc.ChromeOptions()
@@ -45,7 +61,8 @@ def main():
     # Prepare a requests session with Selenium cookies
     session = requests.Session()
     for cookie in driver.get_cookies():
-        session.cookies.set(cookie['name'], cookie['value'])
+        # Clean value to latin-1 before setting as header
+        session.cookies.set(cookie['name'], clean_for_header(cookie['value']))
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Referer": BASE_URL
@@ -63,7 +80,7 @@ def main():
     for idx, title_elem in enumerate(accordion_titles):
         quarter_title = title_elem.text.strip()
         print(f"\nProcessing {quarter_title} [{idx+1}/{len(accordion_titles)}]")
-        m = re.search(r"([IV]+)\s*rüb,?\s*(\d{4})", quarter_title)
+        m = re.search(r"([IV]+)\s*rüb,?\s*(\d{4})", quarter_title, re.IGNORECASE)
         if not m:
             continue
         quarter_roman, year = m.group(1), m.group(2)
@@ -81,7 +98,6 @@ def main():
             print(f"  [!] Could not click: {e}")
             continue
 
-        # Find downloadable links
         try:
             panel_wrap = title_elem.find_element(By.XPATH, "./ancestor::div[contains(@class,'border-bottom-2')]")
             links = panel_wrap.find_elements(By.XPATH, ".//a[@href]")
@@ -107,21 +123,36 @@ def main():
             save_dir = os.path.join(RAW_DATA_DIR, f"{year}_{quarter}")
             os.makedirs(save_dir, exist_ok=True)
             for href, text, ext in file_links:
-                fname = slugify(text or "report") + '.' + ext
+                # Try AZ mapping first
+                base_name = None
+                # Use Azerbaijani base name (before _az_ or just text)
+                if "_az_" in href:
+                    # Sometimes the link has .../Mənfəət və zərər_az_1730360141.pdf
+                    try:
+                        base_candidate = os.path.basename(href)
+                        base_candidate = unquote(base_candidate)
+                        base_candidate = base_candidate.split("_az_")[0]
+                        base_name = AZ_TO_EN.get(base_candidate, None)
+                    except Exception:
+                        base_name = None
+                if not base_name and text:
+                    base_name = AZ_TO_EN.get(text, None)
+                if not base_name:
+                    # Fallback: use URL filename (decoded)
+                    url_fname = os.path.basename(urlparse(href).path)
+                    base_name = unquote(url_fname).rsplit('.', 1)[0]
+                fname = f"{base_name}_{year}_{quarter}.{ext}"
                 fpath = os.path.join(save_dir, fname)
+                print(f"    Downloading: {href} as {fname}")
                 try:
-                    print(f"    Downloading: {href}")
-                    # Always get fresh cookies for each download
                     session.cookies.clear()
                     for cookie in driver.get_cookies():
-                        session.cookies.set(cookie['name'], cookie['value'])
+                        session.cookies.set(cookie['name'], clean_for_header(cookie['value']))
                     r = session.get(href, headers=headers, timeout=15)
-                    # For PDF, check that it's real before saving
                     if ext == 'pdf':
                         if not is_real_pdf(r):
                             print(f"    [!] Not a real PDF (skipped): {href}")
                             continue
-                    # For Excel, check first bytes for 'PK' (xlsx)
                     elif ext in ('xlsx', 'xls'):
                         if not (r.content[:2] == b'PK'):
                             print(f"    [!] Not a real Excel (skipped): {href}")
@@ -141,7 +172,6 @@ def main():
 
     driver.quit()
 
-    # ---- SUMMARY REPORT ----
     print("\n\n========== SUMMARY ==========")
     print(f"Total quarters processed: {len(per_quarter_stats)}")
     print(f"Total files downloaded: {global_stats['total']}")
