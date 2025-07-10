@@ -1,0 +1,249 @@
+[Camelot Lattice] raw_data/kapital_bank/2020_Q1/profit_and_loss.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q1/profit_and_loss.pdf (profit_and_loss) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q1/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2020_Q1/other_general_information.xlsx -> processed_data/kapital_bank_excel/2020_Q1/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2020_Q1/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q1/profit_and_loss.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q1/profit_and_loss.pdf (profit_and_loss) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q1/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2020_Q1/other_general_information.xlsx -> processed_data/kapital_bank_excel/2020_Q1/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2020_Q1/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q1/cash_flows.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q1/cash_flows.pdf (cash_flows) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q1/cash_flows.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q1/changes_in_equity.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q1/changes_in_equity.pdf (changes_in_equity) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q1/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q1/capital_adequacy.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q1/capital_adequacy.pdf (capital_adequacy) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q1/capital_adequacy.pdf — 1 table(s) extracted.
+[WARNING] Only 1 table(s) for raw_data/kapital_bank/2020_Q1/capital_adequacy.pdf (capital_adequacy) — may be missing tables!
+[Camelot Lattice] raw_data/kapital_bank/2020_Q1/balance_sheet.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q1/balance_sheet.pdf (balance_sheet) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q1/balance_sheet.pdf — 2 table(s) extracted.
+[Plumber] raw_data/kapital_bank/2024_Q1/other_general_information.pdf — 14 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q1/profit_and_loss.pdf — 1 table(s) extracted.
+[Plumber] raw_data/kapital_bank/2024_Q1/information_on_the_distribution_of_payment_terms.pdf — 5 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q1/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q1/other_reports.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q1/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q1/capital_adequacy.pdf — 2 table(s) extracted.
+[Plumber] raw_data/kapital_bank/2025_Q1/other_general_information.pdf — 7 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2025_Q1/profit_and_loss.pdf — 1 table(s) extracted.
+[Plumber] raw_data/kapital_bank/2025_Q1/information_on_the_distribution_of_payment_terms.pdf — 4 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2025_Q1/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2025_Q1/other_reports.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2025_Q1/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2025_Q1/capital_adequacy.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q1/profit_and_loss.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q1/profit_and_loss.pdf (profit_and_loss) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q1/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2021_Q1/other_general_information.xlsx -> processed_data/kapital_bank_excel/2021_Q1/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2021_Q1/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q1/cash_flows.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q1/cash_flows.pdf (cash_flows) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q1/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q1/changes_in_equity.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q1/changes_in_equity.pdf (changes_in_equity) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q1/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q1/capital_adequacy.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q1/capital_adequacy.pdf (capital_adequacy) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q1/capital_adequacy.pdf — 1 table(s) extracted.
+[WARNING] Only 1 table(s) for raw_data/kapital_bank/2021_Q1/capital_adequacy.pdf (capital_adequacy) — may be missing tables!
+[Camelot Lattice] raw_data/kapital_bank/2021_Q1/balance_sheet.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q1/balance_sheet.pdf (balance_sheet) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q1/balance_sheet.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q3/profit_and_loss.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2022_Q3/profit_and_loss.pdf (profit_and_loss) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2022_Q3/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2022_Q3/other_general_information.xlsx -> processed_data/kapital_bank_excel/2022_Q3/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2022_Q3/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q3/cash_flows.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2022_Q3/cash_flows.pdf (cash_flows) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2022_Q3/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q3/changes_in_equity.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2022_Q3/changes_in_equity.pdf (changes_in_equity) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2022_Q3/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q3/capital_adequacy.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2022_Q3/capital_adequacy.pdf (capital_adequacy) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2022_Q3/capital_adequacy.pdf — 1 table(s) extracted.
+[WARNING] Only 1 table(s) for raw_data/kapital_bank/2022_Q3/capital_adequacy.pdf (capital_adequacy) — may be missing tables!
+[Camelot Lattice] raw_data/kapital_bank/2022_Q3/balance_sheet.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2022_Q3/balance_sheet.pdf (balance_sheet) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2022_Q3/balance_sheet.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q4/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2022_Q4/other_general_information.xlsx -> processed_data/kapital_bank_excel/2022_Q4/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2022_Q4/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q4/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q4/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q4/capital_adequacy.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q4/balance_sheet.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q2/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2023_Q2/other_general_information.xlsx -> processed_data/kapital_bank_excel/2023_Q2/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2023_Q2/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q2/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q2/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q2/capital_adequacy.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q2/balance_sheet.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2023_Q3/information_on_the_distribution_of_payment_terms.xlsx -> processed_data/kapital_bank_excel/2023_Q3/information_on_the_distribution_of_payment_terms.xlsx
+[EXCEL] Copied raw_data/kapital_bank/2023_Q3/profit_and_loss.xlsx -> processed_data/kapital_bank_excel/2023_Q3/profit_and_loss.xlsx
+[EXCEL] Copied raw_data/kapital_bank/2023_Q3/other_general_information.xlsx -> processed_data/kapital_bank_excel/2023_Q3/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2023_Q3/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q3/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q3/capital_adequacy.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q3/balance_sheet.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q4/balance_sheet.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q2/profit_and_loss.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q2/profit_and_loss.pdf (profit_and_loss) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q2/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2020_Q2/other_general_information.xlsx -> processed_data/kapital_bank_excel/2020_Q2/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2020_Q2/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q2/cash_flows.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q2/cash_flows.pdf (cash_flows) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q2/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q2/changes_in_equity.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q2/changes_in_equity.pdf (changes_in_equity) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q2/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q2/capital_adequacy.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q2/capital_adequacy.pdf (capital_adequacy) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q2/capital_adequacy.pdf — 1 table(s) extracted.
+[WARNING] Only 1 table(s) for raw_data/kapital_bank/2020_Q2/capital_adequacy.pdf (capital_adequacy) — may be missing tables!
+[Camelot Lattice] raw_data/kapital_bank/2020_Q2/balance_sheet.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q2/balance_sheet.pdf (balance_sheet) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q2/balance_sheet.pdf — 2 table(s) extracted.
+[Plumber] raw_data/kapital_bank/2024_Q4/other_general_information.pdf — 16 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q4/profit_and_loss.pdf — 1 table(s) extracted.
+[Plumber] raw_data/kapital_bank/2024_Q4/information_on_the_distribution_of_payment_terms.pdf — 4 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q4/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q4/other_reports.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q4/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q4/capital_adequacy.pdf — 2 table(s) extracted.
+[Plumber] raw_data/kapital_bank/2024_Q3/other_general_information.pdf — 14 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q3/profit_and_loss.pdf — 1 table(s) extracted.
+[Plumber] raw_data/kapital_bank/2024_Q3/information_on_the_distribution_of_payment_terms.pdf — 5 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q3/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q3/other_reports.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q3/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q3/capital_adequacy.pdf — 2 table(s) extracted.
+[Plumber] raw_data/kapital_bank/2024_Q2/other_general_information.pdf — 10 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q2/profit_and_loss.pdf — 1 table(s) extracted.
+[Plumber] raw_data/kapital_bank/2024_Q2/information_on_the_distribution_of_payment_terms.pdf — 4 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q2/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q2/other_reports.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q2/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2024_Q2/capital_adequacy.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q3/profit_and_loss.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q3/profit_and_loss.pdf (profit_and_loss) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q3/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2020_Q3/other_general_information.xlsx -> processed_data/kapital_bank_excel/2020_Q3/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2020_Q3/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q3/cash_flows.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q3/cash_flows.pdf (cash_flows) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q3/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q3/changes_in_equity.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q3/changes_in_equity.pdf (changes_in_equity) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q3/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q3/capital_adequacy.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q3/capital_adequacy.pdf (capital_adequacy) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q3/capital_adequacy.pdf — 1 table(s) extracted.
+[WARNING] Only 1 table(s) for raw_data/kapital_bank/2020_Q3/capital_adequacy.pdf (capital_adequacy) — may be missing tables!
+[Camelot Lattice] raw_data/kapital_bank/2020_Q3/balance_sheet.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q3/balance_sheet.pdf (balance_sheet) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q3/balance_sheet.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q4/profit_and_loss.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q4/profit_and_loss.pdf (profit_and_loss) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q4/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2020_Q4/other_general_information.xlsx -> processed_data/kapital_bank_excel/2020_Q4/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2020_Q4/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q4/cash_flows.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q4/cash_flows.pdf (cash_flows) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q4/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q4/changes_in_equity.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q4/changes_in_equity.pdf (changes_in_equity) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q4/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2020_Q4/capital_adequacy.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q4/capital_adequacy.pdf (capital_adequacy) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q4/capital_adequacy.pdf — 1 table(s) extracted.
+[WARNING] Only 1 table(s) for raw_data/kapital_bank/2020_Q4/capital_adequacy.pdf (capital_adequacy) — may be missing tables!
+[Camelot Lattice] raw_data/kapital_bank/2020_Q4/balance_sheet.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2020_Q4/balance_sheet.pdf (balance_sheet) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2020_Q4/balance_sheet.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q3/profit_and_loss.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q3/profit_and_loss.pdf (profit_and_loss) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q3/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2021_Q3/other_general_information.xlsx -> processed_data/kapital_bank_excel/2021_Q3/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2021_Q3/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q3/cash_flows.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q3/cash_flows.pdf (cash_flows) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q3/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q3/changes_in_equity.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q3/changes_in_equity.pdf (changes_in_equity) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q3/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q3/capital_adequacy.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q3/capital_adequacy.pdf (capital_adequacy) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q3/capital_adequacy.pdf — 1 table(s) extracted.
+[WARNING] Only 1 table(s) for raw_data/kapital_bank/2021_Q3/capital_adequacy.pdf (capital_adequacy) — may be missing tables!
+[Camelot Lattice] raw_data/kapital_bank/2021_Q3/balance_sheet.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q3/balance_sheet.pdf (balance_sheet) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q3/balance_sheet.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q4/profit_and_loss.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q4/profit_and_loss.pdf (profit_and_loss) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q4/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2021_Q4/other_general_information.xlsx -> processed_data/kapital_bank_excel/2021_Q4/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2021_Q4/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q4/cash_flows.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q4/cash_flows.pdf (cash_flows) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q4/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q4/changes_in_equity.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q4/changes_in_equity.pdf (changes_in_equity) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q4/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q4/capital_adequacy.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q4/capital_adequacy.pdf (capital_adequacy) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q4/capital_adequacy.pdf — 1 table(s) extracted.
+[WARNING] Only 1 table(s) for raw_data/kapital_bank/2021_Q4/capital_adequacy.pdf (capital_adequacy) — may be missing tables!
+[Camelot Lattice] raw_data/kapital_bank/2021_Q4/balance_sheet.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q4/balance_sheet.pdf (balance_sheet) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q4/balance_sheet.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q2/profit_and_loss.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q2/profit_and_loss.pdf (profit_and_loss) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q2/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2021_Q2/other_general_information.xlsx -> processed_data/kapital_bank_excel/2021_Q2/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2021_Q2/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q2/cash_flows.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q2/cash_flows.pdf (cash_flows) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q2/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q2/changes_in_equity.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q2/changes_in_equity.pdf (changes_in_equity) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q2/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2021_Q2/capital_adequacy.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q2/capital_adequacy.pdf (capital_adequacy) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q2/capital_adequacy.pdf — 1 table(s) extracted.
+[WARNING] Only 1 table(s) for raw_data/kapital_bank/2021_Q2/capital_adequacy.pdf (capital_adequacy) — may be missing tables!
+[Camelot Lattice] raw_data/kapital_bank/2021_Q2/balance_sheet.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2021_Q2/balance_sheet.pdf (balance_sheet) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2021_Q2/balance_sheet.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q1/profit_and_loss.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2022_Q1/profit_and_loss.pdf (profit_and_loss) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2022_Q1/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2022_Q1/other_general_information.xlsx -> processed_data/kapital_bank_excel/2022_Q1/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2022_Q1/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q1/cash_flows.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2022_Q1/cash_flows.pdf (cash_flows) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2022_Q1/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q1/changes_in_equity.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2022_Q1/changes_in_equity.pdf (changes_in_equity) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2022_Q1/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2022_Q1/capital_adequacy.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2022_Q1/capital_adequacy.pdf (capital_adequacy) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2022_Q1/capital_adequacy.pdf — 1 table(s) extracted.
+[WARNING] Only 1 table(s) for raw_data/kapital_bank/2022_Q1/capital_adequacy.pdf (capital_adequacy) — may be missing tables!
+[Camelot Lattice] raw_data/kapital_bank/2022_Q1/balance_sheet.pdf — 0 table(s) extracted.
+[ERROR] ZERO tables extracted for raw_data/kapital_bank/2022_Q1/balance_sheet.pdf (balance_sheet) — manual review needed!
+[Camelot Stream] raw_data/kapital_bank/2022_Q1/balance_sheet.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q1/profit_and_loss.pdf — 1 table(s) extracted.
+[EXCEL] Copied raw_data/kapital_bank/2023_Q1/other_general_information.xlsx -> processed_data/kapital_bank_excel/2023_Q1/other_general_information.xlsx
+[Camelot Lattice] raw_data/kapital_bank/2023_Q1/information_on_the_distribution_of_payment_terms.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q1/cash_flows.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q1/changes_in_equity.pdf — 1 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q1/capital_adequacy.pdf — 2 table(s) extracted.
+[Camelot Lattice] raw_data/kapital_bank/2023_Q1/balance_sheet.pdf — 1 table(s) extracted.

@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from collections import defaultdict
 
-BASE_URL = "https://www.kapitalbank.az/en/reports"
+BASE_URL = "https://www.kapitalbank.az/reports"
 RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw_data', 'kapital_bank')
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
 
@@ -63,7 +63,7 @@ def main():
     for idx, title_elem in enumerate(accordion_titles):
         quarter_title = title_elem.text.strip()
         print(f"\nProcessing {quarter_title} [{idx+1}/{len(accordion_titles)}]")
-        m = re.search(r"([IV]+)\s*quarter,?\s*(\d{4})", quarter_title)
+        m = re.search(r"([IV]+)\s*rüb,?\s*(\d{4})", quarter_title)
         if not m:
             continue
         quarter_roman, year = m.group(1), m.group(2)

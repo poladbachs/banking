@@ -1,0 +1,14 @@
+========== RAW-vs-PROCESSED: MISSING OUTPUTS ==========
+[OK] All RAW reports have matching Excel outputs in processed folder.
+
+========== CAPITAL ADEQUACY: MISSING SECOND TABLE (WARNINGS) ==========
+[WARNING] Capital Adequacy processed_data/kapital_bank_excel/2020_Q1/capital_adequacy.xlsx has only 1 table(s) (sheet).
+[WARNING] Capital Adequacy processed_data/kapital_bank_excel/2021_Q1/capital_adequacy.xlsx has only 1 table(s) (sheet).
+[WARNING] Capital Adequacy processed_data/kapital_bank_excel/2022_Q3/capital_adequacy.xlsx has only 1 table(s) (sheet).
+[WARNING] Capital Adequacy processed_data/kapital_bank_excel/2020_Q2/capital_adequacy.xlsx has only 1 table(s) (sheet).
+[WARNING] Capital Adequacy processed_data/kapital_bank_excel/2020_Q3/capital_adequacy.xlsx has only 1 table(s) (sheet).
+[WARNING] Capital Adequacy processed_data/kapital_bank_excel/2020_Q4/capital_adequacy.xlsx has only 1 table(s) (sheet).
+[WARNING] Capital Adequacy processed_data/kapital_bank_excel/2021_Q3/capital_adequacy.xlsx has only 1 table(s) (sheet).
+[WARNING] Capital Adequacy processed_data/kapital_bank_excel/2021_Q4/capital_adequacy.xlsx has only 1 table(s) (sheet).
+[WARNING] Capital Adequacy processed_data/kapital_bank_excel/2021_Q2/capital_adequacy.xlsx has only 1 table(s) (sheet).
+[WARNING] Capital Adequacy processed_data/kapital_bank_excel/2022_Q1/capital_adequacy.xlsx has only 1 table(s) (sheet).
