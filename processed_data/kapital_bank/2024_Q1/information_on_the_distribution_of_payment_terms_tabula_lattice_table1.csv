@@ -1,19 +1,0 @@
-A.    Aktivlər,Ödəniş müddətinin başlanmasına qalmış günlər (illər),O cumlədən,Unnamed: 0,Unnamed: 1,Unnamed: 2,Unnamed: 3,Unnamed: 4,Unnamed: 5,Unnamed: 6,Unnamed: 7,Unnamed: 8,Unnamed: 9,Unnamed: 10,Unnamed: 11,Unnamed: 12,Unnamed: 13,Unnamed: 14,Unnamed: 15,Unnamed: 16,Unnamed: 17,Unnamed: 18,Unnamed: 19,Unnamed: 20,Unnamed: 21
-,,ani,1-7,8-14,15-30,31-60,61-90,91-120,121-150,151-180,181-210,211-240,241-270,271-300,301-330,331-365 (366),1-2 il,2-3 il,3-5 il,5 ildən artıq,Cəmi,sabit faizlə,dəyişkən faizlə,faizsiz
-"1. Nağd vəsaitlər (seyflərdə, bankomatlarda,valyuta mübadiləsi şöbələrində, yolda)",A1,"934,902",-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,"934,902",-,-,"934,902"
-"2. AMB-na olan tələblər (məcburi ehtiyat fonduvə ya müxbir hesabları)",A2,"266,688",-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,"1,348,441","1,615,129",-,-,"1,615,129"
-"3. “Nostro"" hesabları",A3,"59,678",-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,"59,678",-,-,"59,678"
-"4. Banklararası bazarın qısamüddətli maliyyəalətləri (7-ci gün də daxil olmaqla 7 günədəkolanlar)",A4,-,"165,000",-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,"165,000","165,000",-,-
-"5. Banklar daxil da olmaqla, maliyyəinstitutlarına depozitlər, cəmi",A5,"22,041","1,716.72","9,160.00","17,000.00",-,"2,000.00",23000.00,0.00,0.00,17000.00,10200.00,0.00,0.00,"10,000","35,275",0.00,-,-,-,"147,393","147,393",-,-
-6. Əks REPO əməliyyatları üzrə,A6,-,"44,481.13",-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,"44,481","44,481",-,-
-"7. Girov qoyulmuş qiymətli kağızlar da daxilolmaqla  qiymətli kağızlara investisiyalar",A7,-,"3,638",-,"22,550","73,684","54,242.50",23416.60,13361.10,8270.50,5510.80,26692.80,3995.00,11433.40,4365.00,25910.70,526712.90,130020.46,59511.94,0.00,"993,316","993,316",-,-
-"8. Girov qoyulmuş qiymətli kağızlar da daxilolmaqla ticarət üçün qiymətli kağızlar",A8,-,"4,823","4,407","7,824","14,952",-,-,-,-,-,-,"2,090",-,-,-,-,-,-,"161,694","195,790","195,790",-,-
-"9. 4-cü sətir üzrə banklararası bazarınqısamüddətli maliyyə alətləri istisna olmaqla,banklara kreditlər",A9,-,-,-,-,-,"1,700",-,-,-,-,-,"3,400","8,500","1,700",-,-,-,-,"2,550","17,850","17,850",-,-
-"10. 4-cü sətir üzrə qısamüddətli maliyyə alətləriistisna olmaqla, digər maliyyə institutlarınakreditlər",A10,-,-,-,36,350,-,630,100,-,190,192,120,61,"4,851",106,"1,187",-,-,-,"7,823","7,823",-,-
-11. Müştərilərə verilən kreditlər,A11,21161.37,30497.72,21972.07,34323.74,114270.05,106882.12,149460.35,106657.97,104795.55,102312.55,93398.99,142418.38,137569.93,91838.07,125866.44,1508551.49,570400.80,464283.89,470431.81,"4,397,093","4,214,613",-,-
-"12. Amortizasiya çıxılmaqla əsas vəsaitlər (bankişində istifadə olunmayan əsas vəsaitlər daxilolmaqla)",A12,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,88106.16,"88,106",-,-,-
-"13. İcmallaşmamış şirkətlərdə investisiyalar vəmaliyyə iştirakı",A13,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,95184.13,"95,184",-,-,-
-14. Qeyri-maddi aktivlər,A14,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,"29,160","29,160",-,-,-
-15. Digər aktivlər,A15,-,"204,840",-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,"299,381","504,221",-,-,"504,221"
-"16. (çıx) Aktivlər üzrə mümkün zərərlərinödənilməsi üçün məqsədli ehtiyatlar",A16,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,-,"528,313","528,313",-,-,-
-17. Cəmi aktivlər,A17,"1,304,471","454,996","35,539","81,734","203,256","164,825","196,507","120,119","113,066","125,013","130,484","152,024","157,564","112,754","187,159","2,036,452","700,421","523,796","1,966,635","8,766,814","5,786,266",-,"3,113,930"

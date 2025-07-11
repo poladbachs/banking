@@ -1,13 +1,12 @@
 import os
 import pandas as pd
 
-RAW_ROOT = "raw_data/abb_bank"
-PROCESSED_ROOT = "processed_data/abb_bank_excel"
-LOG_FILE = "boss_status_abb.txt"
+RAW_ROOT = "raw_data/kapital_bank"
+PROCESSED_ROOT = "processed_data/kapital_bank_excel"
+LOG_FILE = "boss_status_kapital.txt"
 
 missing_outputs = []
 capital_adequacy_warns = []
-risk_reports_warns = []
 
 for root, dirs, files in os.walk(RAW_ROOT):
     rel_path = os.path.relpath(root, RAW_ROOT)
@@ -23,7 +22,7 @@ for root, dirs, files in os.walk(RAW_ROOT):
         if not os.path.exists(expected_excel):
             missing_outputs.append(f"[ERROR] Missing Excel output for {rel_path}/{base} (raw: {ext})")
         else:
-            # Capital Adequacy: warn if less than 2 tables (sheets)
+            # Only care about capital_adequacy.pdf → capital_adequacy.xlsx
             if "adequacy" in base.lower() and ext.lower() == ".pdf":
                 try:
                     xl = pd.ExcelFile(expected_excel)
@@ -34,20 +33,6 @@ for root, dirs, files in os.walk(RAW_ROOT):
                         )
                 except Exception as e:
                     capital_adequacy_warns.append(f"[ERROR] Could not read {expected_excel}: {e}")
-            # Risk Reports: currency_risk/credit_risk, also must have at least 2 tables (sheets)
-            if (
-                (("currency_risk" in base.lower()) or ("credit_risk" in base.lower()))
-                and ext.lower() == ".pdf"
-            ):
-                try:
-                    xl = pd.ExcelFile(expected_excel)
-                    n_sheets = len(xl.sheet_names)
-                    if n_sheets < 2:
-                        risk_reports_warns.append(
-                            f"[WARNING] Risk Report {expected_excel} has only {n_sheets} table(s) (sheet)."
-                        )
-                except Exception as e:
-                    risk_reports_warns.append(f"[ERROR] Could not read {expected_excel}: {e}")
 
 with open(LOG_FILE, "w") as f:
     f.write("========== RAW-vs-PROCESSED: MISSING OUTPUTS ==========\n")
@@ -64,11 +49,4 @@ with open(LOG_FILE, "w") as f:
         for line in capital_adequacy_warns:
             f.write(line + "\n")
 
-    f.write("\n========== RISK REPORTS: CURRENCY & CREDIT RISK (WARNINGS) ==========\n")
-    if not risk_reports_warns:
-        f.write("[OK] All Currency/Credit Risk Excels have 2+ tables (sheets).\n")
-    else:
-        for line in risk_reports_warns:
-            f.write(line + "\n")
-
-print("\nDONE! FULL RAW-PROCESSED + WARNINGS LOG WRITTEN TO boss_status_abb.txt\n")
+print("\nDONE! FULL RAW-PROCESSED + WARNINGS LOG WRITTEN TO boss_status_kapital.txt\n")

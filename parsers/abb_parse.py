@@ -40,7 +40,6 @@ for root, dirs, files in os.walk(RAW_ROOT):
             FAILED_LOG.write(f"[EXCEL] Copied {in_path} -> {out_xlsx}\n")
         # PDF: extract using best available method per report/year
         elif ext == ".pdf":
-            # ABB: no special exception, treat all equally except Capital Adequacy
             if "adequacy" in report_type:
                 tables_lattice = camelot.read_pdf(in_path, pages="all", flavor="lattice")
                 dfs_lattice = [t.df for t in tables_lattice if not t.df.empty]

@@ -48,4 +48,4 @@ if sheets_added > 0:
 
 output_path = os.path.join(OUTPUT_DIR, "master.xlsx")
 master_wb.save(output_path)
-print(f"✅ Master Excel saved to {output_path} with {sheets_added} sheets.")
+print(f"Master Excel saved to {output_path} with {sheets_added} sheets.")
