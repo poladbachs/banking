@@ -1,0 +1,228 @@
+import os
+import time
+import re
+import requests
+import unidecode
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from collections import defaultdict
+
+BASE_URL = "https://abb-bank.az/az/hesabatlar"
+RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw_data', 'abb_bank')
+os.makedirs(RAW_DATA_DIR, exist_ok=True)
+
+SECTION_MAP = {
+    "maliyyə vəziyyəti": "financial_position",
+    "mənfəət və zərər": "profit_and_loss",
+    "pul vəsaitlərinin hərəkəti": "cash_flow",
+    "kapital adekvatlığı": "capital_adequacy",
+    "risk hesabatları": "risk_reports",
+    "likvidlik riski": "liquidity_risk",
+}
+RISK_REPORTS_AZ_TO_EN = {
+    "Kreditlərin, həmçinin vaxtı keçmiş kreditlərin portfeldə payı və onun iqtisadi sektorlar üzrə göstəriciləri": "portfolio_share",
+    "Kredit riski - kreditlərin təminat üzrə bölgüsü": "credit_risk",
+    "Faiz riski": "interest_rate_risk",
+    "Valyuta riski": "currency_risk",
+}
+CAP_ADEQ_AZ = "Bank kapitalının strukturu və adekvatlığı barədə məlumatlar"
+
+def clean_filename(s):
+    s = s.lower().replace(" ", "_").replace("/", "_").replace(",", "")
+    s = re.sub(r"[^a-z0-9_]+", "", s)
+    return s
+
+def normalize(txt):
+    txt = unidecode.unidecode(txt or "")
+    txt = txt.lower()
+    txt = re.sub(r"\s+", " ", txt)
+    return txt.strip()
+
+SECTION_MAP_NORM = {normalize(k): v for k, v in SECTION_MAP.items()}
+
+def get_year_period(text):
+    norm = normalize(text)
+    year_match = re.search(r"(\d{4})", norm)
+    year = year_match.group(1) if year_match else ""
+    # Quarter: i rüb, ii rüb, etc.
+    q_match = re.search(r"\b([iv]+)\s*rub", norm)
+    if q_match:
+        q_roman = q_match.group(1).upper()
+        q_map = {"I": "Q1", "II": "Q2", "III": "Q3", "IV": "Q4"}
+        period = q_map.get(q_roman, q_roman)
+    elif "12 ay" in norm or "illik" in norm:
+        period = "12m"
+    else:
+        period = "unknown"
+    return year, period
+
+def main():
+    options = uc.ChromeOptions()
+    options.add_argument("--no-sandbox")
+    driver = uc.Chrome(options=options)
+    driver.get(BASE_URL)
+    time.sleep(3)
+
+    # Popups
+    try:
+        onesignal_close = driver.find_element(By.CSS_SELECTOR, "#onesignal-slidedown-dialog button.onesignal-slidedown-cancel-button")
+        onesignal_close.click()
+        print("Closed OneSignal notification popup.")
+        time.sleep(1)
+    except Exception:
+        pass
+
+    try:
+        accept_btn = driver.find_element(By.XPATH, "//button[contains(text(), 'Qəbul et')]")
+        accept_btn.click()
+        print("Accepted cookie banner.")
+    except Exception:
+        pass
+    time.sleep(1)
+
+    try:
+        other_reports_btn = driver.find_element(By.XPATH, "//span[contains(text(),'Digər hesabatlar')]")
+        other_reports_btn.click()
+        print("Navigated to Other reports tab.")
+        time.sleep(2)
+    except Exception as e:
+        print(f"[ERROR] Could not click Other reports tab: {e}")
+        driver.quit()
+        return
+
+    session = requests.Session()
+    for cookie in driver.get_cookies():
+        session.cookies.set(cookie['name'], cookie['value'])
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Referer": BASE_URL
+    }
+
+    section_headers = driver.find_elements(By.CSS_SELECTOR, "h4.ac-q")
+    print(f"Found {len(section_headers)} report sections.")
+
+    global_stats_types = defaultdict(int)
+    per_section_stats = []
+
+    for sec_idx, section in enumerate(section_headers):
+        section_name_az = section.text.strip()
+        section_name_az_norm = normalize(section_name_az)
+        if section_name_az_norm not in SECTION_MAP_NORM:
+            continue
+        section_name_en = SECTION_MAP_NORM[section_name_az_norm]
+        print(f"\nSection [{sec_idx+1}/{len(section_headers)}]: {section_name_en}")
+
+        # Expand section if needed
+        try:
+            if not section.get_attribute("aria-expanded") or section.get_attribute("aria-expanded") == "false":
+                driver.execute_script("arguments[0].scrollIntoView();", section)
+                ActionChains(driver).move_to_element(section).perform()
+                section.click()
+                time.sleep(1.0)
+        except Exception:
+            continue
+
+        cards = section.find_elements(By.XPATH, "./following-sibling::div[1]//a[contains(@href,'.pdf')]")
+        print(f"  Found {len(cards)} cards.")
+
+        n_downloads = 0
+        per_type = defaultdict(int)
+        per_periods = []
+        downloaded_keys = set()
+
+        for card in cards:
+            href = card.get_attribute("href")
+            # For correct matching, always extract period from the <p> text above the link
+            try:
+                period_elem = card.find_element(By.XPATH, "../../p[1]")
+                period_text = period_elem.text.strip()
+            except Exception:
+                period_text = card.text.strip()
+
+            year, period = get_year_period(period_text)
+            if year and int(year) < 2020:
+                continue
+            ext = href.split('.')[-1].split('?')[0].lower()
+            if ext != 'pdf':
+                continue
+
+            do_download = False
+            save_name = None
+
+            # Exact filtering logic
+            if section_name_en == "capital_adequacy":
+                # Only one specific doc per period
+                if CAP_ADEQ_AZ in period_text:
+                    do_download = True
+                    save_name = f"{section_name_en}_{year}_{period}.pdf"
+            elif section_name_en == "risk_reports":
+                for az_title, en_title in RISK_REPORTS_AZ_TO_EN.items():
+                    # File should *start with* the Azerbaijani risk title
+                    if period_text.strip().startswith(az_title):
+                        key = (en_title, year, period)
+                        if key in downloaded_keys:
+                            continue
+                        downloaded_keys.add(key)
+                        save_name = f"{section_name_en}_{en_title}_{year}_{period}.pdf"
+                        do_download = True
+                        break
+            else:
+                # All others: save as section_en_year_period.pdf
+                save_name = f"{section_name_en}_{year}_{period}.pdf"
+                do_download = True
+
+            if not do_download or not save_name or year == "" or period == "unknown":
+                continue  # Strict: don't save unknowns
+
+            save_dir = os.path.join(RAW_DATA_DIR, section_name_en)
+            os.makedirs(save_dir, exist_ok=True)
+            fpath = os.path.join(save_dir, save_name)
+            print(f"    Downloading: {save_name}")
+
+            try:
+                r = session.get(href, headers=headers, timeout=20)
+                if not r.content.startswith(b'%PDF-'):
+                    print(f"    [!] Not a real PDF: {href}")
+                    continue
+                with open(fpath, "wb") as out:
+                    out.write(r.content)
+                per_type[ext] += 1
+                global_stats_types[ext] += 1
+                per_periods.append((year, period, ext))
+                n_downloads += 1
+            except Exception as e:
+                print(f"    [!] Download error: {e}")
+
+        per_section_stats.append({
+            "section": section_name_en,
+            "nfiles": n_downloads,
+            "per_type": dict(per_type),
+            "periods": per_periods,
+        })
+
+    driver.quit()
+
+    # --- SUMMARY ---
+    print("\n\n========== SUMMARY ==========")
+    total_files = sum(s["nfiles"] for s in per_section_stats)
+    print(f"Total sections processed: {len(per_section_stats)}")
+    print(f"Total files downloaded: {total_files}")
+    print("Breakdown by file type:")
+    for ext, count in global_stats_types.items():
+        print(f"  .{ext}: {count}")
+
+    print("\nPer section:")
+    for s in per_section_stats:
+        type_str = ', '.join([f"{k}: {v}" for k, v in s["per_type"].items()]) or "None"
+        print(f"  {s['section']} — {s['nfiles']} files  ({type_str})")
+
+    if any(s["nfiles"] == 0 for s in per_section_stats):
+        print("\nSections with **NO** downloadable files:")
+        for s in per_section_stats:
+            if s["nfiles"] == 0:
+                print("  ", s["section"])
+    print("========== END ==========")
+
+if __name__ == "__main__":
+    main()
