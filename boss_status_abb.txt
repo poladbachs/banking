@@ -1,2 +1,0 @@
-========== RAW-vs-PROCESSED: MISSING OUTPUTS ==========
-[OK] All RAW reports have matching Excel outputs in processed folder.

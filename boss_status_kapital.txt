@@ -1,5 +1,0 @@
-========== RAW-vs-PROCESSED: MISSING OUTPUTS ==========
-[OK] All RAW reports have matching Excel outputs in processed folder.
-
-========== CAPITAL ADEQUACY: MISSING SECOND TABLE (WARNINGS) ==========
-[OK] All Capital Adequacy Excels have 2+ tables (sheets).
