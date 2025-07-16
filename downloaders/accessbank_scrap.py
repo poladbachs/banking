@@ -8,7 +8,10 @@ from selenium.webdriver.common.by import By
 
 BASE_URL = "https://www.accessbank.az/az/our-bank/in-figures/"
 RAW_DATA_DIR = os.path.join("raw_data", "access_bank")
+PROCESSED_DATA_DIR = os.path.join("processed_data", "access_bank")
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
+os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
+
 
 SECTION_MAP = {
     "Kapital adekvatlığı": "capital_adequacy",
@@ -148,7 +151,10 @@ def main():
                     report_type = section_en
 
                 save_name = f"{report_type}_{yyyy}_{quarter}{ext}"
-                fpath = os.path.join(RAW_DATA_DIR, save_name)
+                if ext == ".pdf":
+                    fpath = os.path.join(RAW_DATA_DIR, save_name)
+                else:
+                    fpath = os.path.join(PROCESSED_DATA_DIR, save_name)
                 if os.path.exists(fpath):
                     report.append(f"[OK] {save_name} (already exists)")
                     total_downloaded += 1
