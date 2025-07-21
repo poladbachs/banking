@@ -49,6 +49,9 @@ def main():
                     href = a.get_attribute("href")
                     if not href or not href.endswith(".xlsx") or not quarter.startswith("Q"):
                         continue
+                    period = f"{yyyy}_{quarter}"
+                    folder = os.path.join(RAW_DATA_DIR, period)
+                    os.makedirs(folder, exist_ok=True)
                     filename = f"unibank_{year}_{quarter}.xlsx"
                     fpath = os.path.join(RAW_DATA_DIR, filename)
                     if os.path.exists(fpath):
