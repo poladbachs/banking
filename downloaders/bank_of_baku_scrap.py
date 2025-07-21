@@ -95,11 +95,11 @@ def main():
                     quarter = normalize_quarter_label(span)
                     if not href or not quarter:
                         continue
-                    period = f"{yyyy}_{quarter}"
+                    period = f"{year}_{quarter}"
                     folder = os.path.join(PROCESSED_DATA_DIR, period)
                     os.makedirs(folder, exist_ok=True)
                     fname = f"bank_of_baku_{internal_name}_{year}_{quarter}.xlsx"
-                    fpath = os.path.join(PROCESSED_DATA_DIR, fname)
+                    fpath = os.path.join(folder, fname)
                     if os.path.exists(fpath):
                         report.append(f"[OK] {fname} (already exists)")
                         continue
