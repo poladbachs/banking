@@ -9,11 +9,23 @@ from selenium.webdriver.common.action_chains import ActionChains
 from collections import defaultdict
 
 BASE_URL = "https://abb-bank.az/az/hesabatlar"
-RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw_data', 'abb_bank')
+RAW_DATA_DIR = os.path.join("raw_data", "abb_bank")
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
 
+# English names for logging & matching
+CORE_REPORTS = [
+    "balance_sheet",
+    "profit_and_loss",
+    "cash_flow",
+    "capital_adequacy",
+    "liquidity_risk",
+    "portfolio_share",
+    "credit_risk",
+    "interest_rate_risk",
+    "currency_risk"
+]
 SECTION_MAP = {
-    "maliyyə vəziyyəti": "financial_position",
+    "maliyyə vəziyyəti": "balance_sheet",
     "mənfəət və zərər": "profit_and_loss",
     "pul vəsaitlərinin hərəkəti": "cash_flow",
     "kapital adekvatlığı": "capital_adequacy",
@@ -50,6 +62,12 @@ def get_year_period(text):
     else:
         period = "unknown"
     return year, period
+
+def file_exists_anywhere(root, fname):
+    for dirpath, _, files in os.walk(root):
+        if fname in files:
+            return True
+    return False
 
 def main():
     options = uc.ChromeOptions()
@@ -92,6 +110,8 @@ def main():
     section_headers = driver.find_elements(By.CSS_SELECTOR, "h4.ac-q")
     print(f"Found {len(section_headers)} report sections.")
 
+    quarter_files = defaultdict(set)  # (year_quarter): set([report_types])
+    downloaded_keys = set()
     for section in section_headers:
         section_name_az = section.text.strip()
         section_name_az_norm = normalize(section_name_az)
@@ -112,7 +132,6 @@ def main():
         cards = section.find_elements(By.XPATH, "./following-sibling::div[1]//a[contains(@href,'.pdf')]")
         print(f"  Found {len(cards)} cards.")
 
-        downloaded_keys = set()
         for card in cards:
             href = card.get_attribute("href")
             try:
@@ -121,42 +140,47 @@ def main():
             except Exception:
                 period_text = card.text.strip()
             year, period = get_year_period(period_text)
-            if year and int(year) < 2020:
+            if not year or not period or period == "unknown" or int(year) < 2020:
                 continue
             ext = href.split('.')[-1].split('?')[0].lower()
-            if ext != 'pdf' or year == "" or period == "unknown":
+            if ext != 'pdf':
                 continue
 
+            report_type = None
             do_download = False
-            save_name = None
 
+            # Capital adequacy (must have special text)
             if section_name_en == "capital_adequacy":
                 if CAP_ADEQ_AZ in period_text:
-                    do_download = True
                     report_type = section_name_en
+                    do_download = True
+            # Risk reports (match in the az/en dict)
             elif section_name_en == "risk_reports":
                 for az_title, en_title in RISK_REPORTS_AZ_TO_EN.items():
                     if period_text.strip().startswith(az_title):
                         key = (en_title, year, period)
                         if key in downloaded_keys:
-                            continue
+                            do_download = False
+                            break
                         downloaded_keys.add(key)
-                        report_type = f"{section_name_en}_{en_title}"
+                        report_type = en_title
                         do_download = True
                         break
             else:
                 report_type = section_name_en
                 do_download = True
 
-            if not do_download:
+            if not do_download or not report_type:
                 continue
 
-            quarter_folder = f"{year}_{period}"
-            save_dir = os.path.join(RAW_DATA_DIR, quarter_folder)
-            os.makedirs(save_dir, exist_ok=True)
             save_name = f"{report_type}_{year}_{period}.pdf"
-            fpath = os.path.join(save_dir, save_name)
-            print(f"    Downloading: {quarter_folder}/{save_name}")
+            fpath = os.path.join(RAW_DATA_DIR, save_name)
+            if file_exists_anywhere(RAW_DATA_DIR, save_name):
+                print(f"[SKIP] Already exists somewhere: {save_name}")
+                quarter_files[f"{year}_{period}"].add(report_type)
+                continue
+
+            print(f"    Downloading: {save_name}")
 
             try:
                 r = session.get(href, headers=headers, timeout=20)
@@ -165,11 +189,29 @@ def main():
                     continue
                 with open(fpath, "wb") as out:
                     out.write(r.content)
+                quarter_files[f"{year}_{period}"].add(report_type)
             except Exception as e:
                 print(f"    [!] Download error: {e}")
 
     driver.quit()
-    print("\nDONE! All PDFs saved in quarter folders!\n")
+
+    # Scan already existing files in RAW_DATA_DIR
+    for fname in os.listdir(RAW_DATA_DIR):
+        m = re.match(r"([a-z_]+)_(\d{4})_Q(\d)\.pdf", fname)
+        if m:
+            report_type, year, quarter = m.group(1), m.group(2), f"Q{m.group(3)}"
+            key = f"{year}_{quarter}"
+            quarter_files[key].add(report_type)
+
+    # === Consistent summary reporting ===
+    print("\n=== SUMMARY OF MISSING REPORTS PER QUARTER ===")
+    all_quarters = sorted(quarter_files.keys())
+    for quarter in all_quarters:
+        got = quarter_files[quarter]
+        miss = [k for k in CORE_REPORTS if k not in got]
+        if miss:
+            print(f"{quarter}: missing {miss}")
+    print("Done.\nAll PDFs in raw_data/abb_bank/")
 
 if __name__ == "__main__":
     main()

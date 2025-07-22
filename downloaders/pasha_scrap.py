@@ -11,7 +11,9 @@ from urllib.parse import urljoin
 
 BASE_URL = "https://www.pashabank.az/static,95/lang,az/"
 RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw_data', 'pasha_bank')
+PROCESSED_ROOT = os.path.join(os.path.dirname(__file__), '..', 'processed_data', 'pasha_bank')
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
+os.makedirs(PROCESSED_ROOT, exist_ok=True)
 
 SECTION_MAP = {
     "maliyyə hesabatları": "balance",
@@ -71,6 +73,12 @@ def is_2022_or_after(year, period):
         return True
     if y == 2022:
         return period in ["Q1", "Q2", "Q3", "Q4"]
+    return False
+
+def file_exists_anywhere(root, fname):
+    for dirpath, _, files in os.walk(root):
+        if fname in files:
+            return True
     return False
 
 def main():
@@ -145,12 +153,6 @@ def main():
         files_on_site[(year, period)][section_type] = (href, save_name, ext)
         present_periods.add((year, period))
 
-    # PRINT unmatched links for debugging
-    if unmatched_links:
-        print("\n[DEBUG] Unmatched links (not mapped):")
-        for orig, normed, href in unmatched_links:
-            print(f"  RAW: {orig} | NORM: {normed} | {href}")
-
     def period_key(x):
         year, period = x
         qorder = {"Q1": 1, "Q2": 2, "Q3": 3, "Q4": 4, "12m": 5}
@@ -160,7 +162,6 @@ def main():
     total_downloaded = 0
     for y, q in periods_sorted:
         is_after = is_2022_or_after(y, q)
-
         if is_after:
             expected_types = BASE_EXPECTED + ["capital_change", "capital_adequacy"]
         else:
@@ -170,26 +171,38 @@ def main():
         for typ in expected_types:
             on_site = [k for k in found_types.keys() if k == typ]
             file_downloaded = False
-            if on_site:
+            fname_pdf = f"{typ}_{y}_{q}.pdf"
+            fname_xlsx = f"{typ}_{y}_{q}.xlsx"
+            fname_xls = f"{typ}_{y}_{q}.xls"
+            # Check if file already exists anywhere (future proof)
+            already_exists = any(
+                file_exists_anywhere(RAW_DATA_DIR, fname)
+                for fname in [fname_pdf, fname_xlsx, fname_xls]
+            ) or any(
+                file_exists_anywhere(PROCESSED_ROOT, fname)
+                for fname in [fname_xlsx, fname_xls]
+            )
+            if on_site and not already_exists:
                 href, actual_fname, ext = found_types[typ]
                 fpath_actual = os.path.join(RAW_DATA_DIR, actual_fname)
-                if not os.path.exists(fpath_actual):
-                    try:
-                        print(f"    Downloading: {actual_fname}")
-                        r = session.get(href, headers=headers, timeout=20)
-                        if (actual_fname.endswith(".pdf") and not r.content.startswith(b'%PDF-')) or (actual_fname.endswith(".xlsx") and r.content[:2] != b'PK'):
-                            report.append(f"[SKIP_CORRUPT] {actual_fname}")
-                            continue
-                        with open(fpath_actual, "wb") as out:
-                            out.write(r.content)
-                        report.append(f"[OK] {actual_fname}")
-                        total_downloaded += 1
-                    except Exception as e:
-                        report.append(f"[ERROR] {actual_fname}: {e}")
+                try:
+                    print(f"    Downloading: {actual_fname}")
+                    r = session.get(href, headers=headers, timeout=20)
+                    if (actual_fname.endswith(".pdf") and not r.content.startswith(b'%PDF-')) or (
+                        actual_fname.endswith(".xlsx") and r.content[:2] != b'PK'
+                    ):
+                        report.append(f"[SKIP_CORRUPT] {actual_fname}")
                         continue
-                else:
+                    with open(fpath_actual, "wb") as out:
+                        out.write(r.content)
                     report.append(f"[OK] {actual_fname}")
                     total_downloaded += 1
+                except Exception as e:
+                    report.append(f"[ERROR] {actual_fname}: {e}")
+                    continue
+                file_downloaded = True
+            elif already_exists:
+                report.append(f"[SKIP] Already exists: {typ}_{y}_{q}")
                 file_downloaded = True
             # For 2022 Q1+ (and after), if capital_adequacy missing but capital_change exists, RENAME ON DISK!
             if (typ == "capital_adequacy" and is_after and not file_downloaded):
@@ -203,11 +216,10 @@ def main():
                         total_downloaded += 1
                         moved = True
                         break
-                # DO NOT REPORT MISSING IF NOT MOVED
             elif not file_downloaded and not (typ == "capital_adequacy" and is_after):
                 report.append(f"[MISSING_ON_SITE] {typ}_{y}_{q}.pdf")
 
-    print("\n=== FULL ABB-STYLE REPORT ===")
+    print("\n=== FULL REPORT ===")
     for line in report:
         print(line)
 

@@ -1,45 +1,65 @@
 import os
-import time
 import re
+import time
 import requests
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from collections import defaultdict
-import sys
 from urllib.parse import unquote, urlparse
 
-# Ensure terminal print supports unicode (for macOS and Python 3.7+)
-if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8")
-
 BASE_URL = "https://www.kapitalbank.az/reports"
-RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw_data', 'kapital_bank')
+RAW_DATA_DIR = os.path.join("raw_data", "kapital_bank")
+PROCESSED_DIR = os.path.join("processed_data", "kapital_bank")
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
+os.makedirs(PROCESSED_DIR, exist_ok=True)
 
-AZ_TO_EN = {
-    "Mənfəət və zərər": "profit_and_loss",
-    "Pul vəsaitlərinin hərəkəti": "cash_flows",
-    "Kapital dəyişmələri": "changes_in_equity",
-    "Kapital adekvatlığı": "capital_adequacy",
-    "Ödəniş müddətlərinin bölgüsü barədə məlumat": "payment_terms",
-    "Digər ümumi məlumatlar": "other_general_info",
-    "Balans hesabatı": "balance_sheet"
+CORE_6 = {
+    "balance_sheet":     [["balans", "hesabat"]],
+    "capital_adequacy":  [["kapital", "adekvat"]],
+    "profit_loss":       [["mənfəət", "zərər"]],
+    "capital_change":    [["kapital", "dəyiş"]],
+    "cash_flow":         [["pul", "hərəkət"]],
+    "other_general_info":[["digər", "ümumi", "məlumat"]],
 }
 
-def is_real_pdf(r):
-    if r.status_code != 200:
-        return False
-    ctype = r.headers.get('Content-Type', '').lower()
-    if not (ctype.startswith('application/pdf') or ctype.startswith('application/octet-stream')):
-        return False
-    return r.content[:5] == b'%PDF-'
-
 def clean_for_header(val):
-    # Only allow latin-1 chars for HTTP headers/cookies (per HTTP/1.x spec)
     if isinstance(val, str):
         return val.encode("latin-1", "ignore").decode("latin-1")
     return val
+
+def matches_keywords(text, keyword_sets):
+    t = text.lower()
+    for keywords in keyword_sets:
+        if all(kw in t for kw in keywords):
+            return True
+    return False
+
+def get_en_report_type(text):
+    for k, keywords in CORE_6.items():
+        if matches_keywords(text, keywords):
+            return k
+    return None
+
+def extract_quarter(label):
+    match = re.search(r'([IV]+)\s*rüb[^\d]*(\d{4})', label, re.I)
+    if not match:
+        return None, None
+    roman, year = match.group(1).upper(), match.group(2)
+    q_map = {"I": "Q1", "II": "Q2", "III": "Q3", "IV": "Q4"}
+    return q_map.get(roman), year
+
+def is_real_excel(content):
+    return content[:2] == b'PK'
+
+def is_real_pdf(content):
+    return content[:5] == b'%PDF-'
+
+def file_exists_anywhere(root, fname):
+    for dirpath, _, files in os.walk(root):
+        if fname in files:
+            return True
+    return False
 
 def main():
     options = uc.ChromeOptions()
@@ -48,145 +68,121 @@ def main():
     driver.get(BASE_URL)
     time.sleep(3)
 
-    # Accept cookies
+    # Accept cookies if present
     try:
         accept_btn = driver.find_element(By.XPATH, "//button[contains(text(), 'Accept')]")
         accept_btn.click()
-        print("Accepted cookie banner.")
     except Exception:
-        print("No cookie banner or already accepted.")
-
+        pass
     time.sleep(2)
 
-    # Prepare a requests session with Selenium cookies
+    # Prepare requests session with sanitized cookies
     session = requests.Session()
     for cookie in driver.get_cookies():
-        # Clean value to latin-1 before setting as header
         session.cookies.set(cookie['name'], clean_for_header(cookie['value']))
+
     headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "User-Agent": "Mozilla/5.0",
         "Referer": BASE_URL
     }
 
     accordion_titles = driver.find_elements(By.CSS_SELECTOR, ".accordion--pls--title")
-    print(f"Found {len(accordion_titles)} quarter blocks.")
+    per_quarter_files = defaultdict(set)
 
-    q_map = {"I": "Q1", "II": "Q2", "III": "Q3", "IV": "Q4"}
-    global_stats = defaultdict(int)
-    global_stats_types = defaultdict(int)
-    per_quarter_stats = []
-    empty_quarters = []
-
-    for idx, title_elem in enumerate(accordion_titles):
+    for title_elem in accordion_titles:
         quarter_title = title_elem.text.strip()
-        print(f"\nProcessing {quarter_title} [{idx+1}/{len(accordion_titles)}]")
-        m = re.search(r"([IV]+)\s*rüb,?\s*(\d{4})", quarter_title, re.IGNORECASE)
-        if not m:
+        quarter, year = extract_quarter(quarter_title)
+        if not quarter or not year or int(year) < 2020:
             continue
-        quarter_roman, year = m.group(1), m.group(2)
-        quarter = q_map.get(quarter_roman, quarter_roman)
-        if int(year) < 2020:
-            continue
+        period = f"{year}_{quarter}"
 
+        # Expand accordion
         try:
             driver.execute_script("arguments[0].scrollIntoView();", title_elem)
             ActionChains(driver).move_to_element(title_elem).perform()
             if not title_elem.get_attribute("aria-expanded") or title_elem.get_attribute("aria-expanded") == "false":
                 title_elem.click()
             time.sleep(1.0)
-        except Exception as e:
-            print(f"  [!] Could not click: {e}")
+        except Exception:
             continue
 
-        try:
-            panel_wrap = title_elem.find_element(By.XPATH, "./ancestor::div[contains(@class,'border-bottom-2')]")
-            links = panel_wrap.find_elements(By.XPATH, ".//a[@href]")
-            file_links = []
-            stats_types = defaultdict(int)
-            for a in links:
-                href = a.get_attribute("href")
-                text = a.text.strip()
-                ext_match = re.search(r'\.([a-z0-9]+)(?:\?|$)', href, re.IGNORECASE)
-                if href and ext_match and ext_match.group(1) in ['pdf', 'xlsx', 'xls', 'csv']:
-                    ext = ext_match.group(1).lower()
-                    file_links.append((href, text, ext))
-                    stats_types[ext] += 1
-                    global_stats_types[ext] += 1
+        # Find links
+        panel_wrap = title_elem.find_element(By.XPATH, "./ancestor::div[contains(@class,'border-bottom-2')]")
+        links = panel_wrap.find_elements(By.XPATH, ".//a[@href]")
+        for a in links:
+            href = a.get_attribute("href")
+            text = a.text.strip()
+            ext = os.path.splitext(href.split("?")[0])[-1].lower().replace(".", "")
+            if not href or ext not in ["pdf", "xlsx", "xls"]:
+                continue
 
-            nfiles = len(file_links)
-            global_stats["total"] += nfiles
-            per_quarter_stats.append((f"{year}_{quarter}", nfiles, dict(stats_types)))
-            if nfiles == 0:
-                empty_quarters.append(f"{year}_{quarter}")
-            print(f"  Found {nfiles} downloadable file links.")
+            # Try to match report type by link text first, then by filename
+            en_name = get_en_report_type(text)
+            if not en_name:
+                url_fname = unquote(os.path.basename(urlparse(href).path)).replace("_", " ").lower()
+                en_name = get_en_report_type(url_fname)
+            if not en_name:
+                continue
 
-            save_dir = os.path.join(RAW_DATA_DIR, f"{year}_{quarter}")
-            os.makedirs(save_dir, exist_ok=True)
-            for href, text, ext in file_links:
-                # Try AZ mapping first
-                base_name = None
-                # Use Azerbaijani base name (before _az_ or just text)
-                if "_az_" in href:
-                    # Sometimes the link has .../Mənfəət və zərər_az_1730360141.pdf
-                    try:
-                        base_candidate = os.path.basename(href)
-                        base_candidate = unquote(base_candidate)
-                        base_candidate = base_candidate.split("_az_")[0]
-                        base_name = AZ_TO_EN.get(base_candidate, None)
-                    except Exception:
-                        base_name = None
-                if not base_name and text:
-                    base_name = AZ_TO_EN.get(text, None)
-                if not base_name:
-                    # Fallback: use URL filename (decoded)
-                    url_fname = os.path.basename(urlparse(href).path)
-                    base_name = unquote(url_fname).rsplit('.', 1)[0]
-                fname = f"{base_name}_{year}_{quarter}.{ext}"
-                fpath = os.path.join(save_dir, fname)
-                print(f"    Downloading: {href} as {fname}")
-                try:
-                    session.cookies.clear()
-                    for cookie in driver.get_cookies():
-                        session.cookies.set(cookie['name'], clean_for_header(cookie['value']))
-                    r = session.get(href, headers=headers, timeout=15)
-                    if ext == 'pdf':
-                        if not is_real_pdf(r):
-                            print(f"    [!] Not a real PDF (skipped): {href}")
-                            continue
-                    elif ext in ('xlsx', 'xls'):
-                        if not (r.content[:2] == b'PK'):
-                            print(f"    [!] Not a real Excel (skipped): {href}")
-                            continue
-                    with open(fpath, "wb") as out:
-                        out.write(r.content)
-                except Exception as e:
-                    print(f"    [!] Download error: {e}")
-
-        except Exception as e:
-            print(f"  [!] No links found or could not expand: {e}")
-            empty_quarters.append(f"{year}_{quarter}")
-            per_quarter_stats.append((f"{year}_{quarter}", 0, {}))
-            continue
-
-        time.sleep(0.4)
-
+            if ext in ["xlsx", "xls"]:
+                period_dir = os.path.join(PROCESSED_DIR, period)
+                os.makedirs(period_dir, exist_ok=True)
+                fname = f"{en_name}_{period}.{ext}"
+                fpath = os.path.join(period_dir, fname)
+                if file_exists_anywhere(PROCESSED_DIR, fname):
+                    print(f"[SKIP] Already exists: {fname}")
+                    per_quarter_files[period].add(en_name)
+                    continue
+                print(f"Downloading: {fname}")
+                r = session.get(href, headers=headers, timeout=20)
+                if not is_real_excel(r.content):
+                    print(f"  [!] Not a real Excel (skipped): {href}")
+                    continue
+                with open(fpath, "wb") as out:
+                    out.write(r.content)
+                per_quarter_files[period].add(en_name)
+            elif ext == "pdf":
+                fname = f"{en_name}_{period}.pdf" if en_name in CORE_6 else os.path.basename(urlparse(href).path)
+                fpath = os.path.join(RAW_DATA_DIR, fname)
+                if file_exists_anywhere(RAW_DATA_DIR, fname):
+                    print(f"[SKIP] Already exists: {fname}")
+                    continue
+                print(f"[PDF] {fname}")
+                r = session.get(href, headers=headers, timeout=20)
+                if not is_real_pdf(r.content):
+                    print(f"  [!] Not a real PDF (skipped): {href}")
+                    continue
+                with open(fpath, "wb") as out:
+                    out.write(r.content)
+                if en_name in CORE_6:
+                    per_quarter_files[period].add(en_name)
+        time.sleep(0.5)
     driver.quit()
 
-    print("\n\n========== SUMMARY ==========")
-    print(f"Total quarters processed: {len(per_quarter_stats)}")
-    print(f"Total files downloaded: {global_stats['total']}")
-    print("Breakdown by file type:")
-    for ext, count in global_stats_types.items():
-        print(f"  .{ext}: {count}")
-    print("\nPer quarter:")
-    for name, nfiles, type_dict in per_quarter_stats:
-        type_str = ', '.join([f"{k}: {v}" for k, v in type_dict.items()]) or "None"
-        print(f"  {name} — {nfiles} files  ({type_str})")
-    if empty_quarters:
-        print("\nQuarters with **NO** downloadable files:")
-        for q in empty_quarters:
-            print(" ", q)
-    print("========== END ==========")
+    # -- Rebuild per_quarter_files from all files present on disk (future-proof, accurate) --
+    per_quarter_files_disk = defaultdict(set)
+    for dirpath, _, files in os.walk(PROCESSED_DIR):
+        for fname in files:
+            m = re.match(r"([a-z_]+)_(20\d{2}_(?:Q[1-4]|12m))\.(xlsx|xls)", fname)
+            if m:
+                report_type, period, ext = m.groups()
+                per_quarter_files_disk[period].add(report_type)
+    for dirpath, _, files in os.walk(RAW_DATA_DIR):
+        for fname in files:
+            m = re.match(r"([a-z_]+)_(20\d{2}_(?:Q[1-4]|12m))\.pdf", fname)
+            if m:
+                report_type, period = m.groups()
+                per_quarter_files_disk[period].add(report_type)
+
+    # Use this new mapping for summary!
+    print("\n=== SUMMARY OF MISSING REPORTS PER QUARTER ===")
+    core_keys = list(CORE_6.keys())
+    for period in sorted(per_quarter_files_disk.keys()):
+        got = per_quarter_files_disk[period]
+        miss = [k for k in core_keys if k not in got]
+        if miss:
+            print(f"{period}: missing {miss}")
+    print("Done.\nAll Excels in processed_data/kapital_bank/<year>_<quarter>/, all PDFs in raw_data/kapital_bank/")
 
 if __name__ == "__main__":
     main()
