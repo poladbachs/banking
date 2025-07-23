@@ -12,7 +12,6 @@ BASE_URL = "https://abb-bank.az/az/hesabatlar"
 RAW_DATA_DIR = os.path.join("raw_data", "abb_bank")
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
 
-# English names for logging & matching
 CORE_REPORTS = [
     "balance_sheet",
     "profit_and_loss",
@@ -63,11 +62,10 @@ def get_year_period(text):
         period = "unknown"
     return year, period
 
-def file_exists_anywhere(root, fname):
-    for dirpath, _, files in os.walk(root):
-        if fname in files:
-            return True
-    return False
+def file_exists_anywhere(period, fname):
+    # Checks for file in period's subfolder (future-proof, avoids dups)
+    period_dir = os.path.join(RAW_DATA_DIR, period)
+    return os.path.exists(os.path.join(period_dir, fname))
 
 def main():
     options = uc.ChromeOptions()
@@ -110,7 +108,7 @@ def main():
     section_headers = driver.find_elements(By.CSS_SELECTOR, "h4.ac-q")
     print(f"Found {len(section_headers)} report sections.")
 
-    quarter_files = defaultdict(set)  # (year_quarter): set([report_types])
+    quarter_files = defaultdict(set)  # {period: set([report_types])}
     downloaded_keys = set()
     for section in section_headers:
         section_name_az = section.text.strip()
@@ -149,12 +147,10 @@ def main():
             report_type = None
             do_download = False
 
-            # Capital adequacy (must have special text)
             if section_name_en == "capital_adequacy":
                 if CAP_ADEQ_AZ in period_text:
                     report_type = section_name_en
                     do_download = True
-            # Risk reports (match in the az/en dict)
             elif section_name_en == "risk_reports":
                 for az_title, en_title in RISK_REPORTS_AZ_TO_EN.items():
                     if period_text.strip().startswith(az_title):
@@ -173,15 +169,17 @@ def main():
             if not do_download or not report_type:
                 continue
 
+            quarter_folder = f"{year}_{period}"
+            period_dir = os.path.join(RAW_DATA_DIR, quarter_folder)
+            os.makedirs(period_dir, exist_ok=True)
             save_name = f"{report_type}_{year}_{period}.pdf"
-            fpath = os.path.join(RAW_DATA_DIR, save_name)
-            if file_exists_anywhere(RAW_DATA_DIR, save_name):
-                print(f"[SKIP] Already exists somewhere: {save_name}")
-                quarter_files[f"{year}_{period}"].add(report_type)
+            fpath = os.path.join(period_dir, save_name)
+            if file_exists_anywhere(quarter_folder, save_name):
+                print(f"[SKIP] Already exists in {quarter_folder}: {save_name}")
+                quarter_files[quarter_folder].add(report_type)
                 continue
 
-            print(f"    Downloading: {save_name}")
-
+            print(f"    Downloading: {quarter_folder}/{save_name}")
             try:
                 r = session.get(href, headers=headers, timeout=20)
                 if not r.content.startswith(b'%PDF-'):
@@ -189,29 +187,31 @@ def main():
                     continue
                 with open(fpath, "wb") as out:
                     out.write(r.content)
-                quarter_files[f"{year}_{period}"].add(report_type)
+                quarter_files[quarter_folder].add(report_type)
             except Exception as e:
                 print(f"    [!] Download error: {e}")
 
     driver.quit()
 
-    # Scan already existing files in RAW_DATA_DIR
-    for fname in os.listdir(RAW_DATA_DIR):
-        m = re.match(r"([a-z_]+)_(\d{4})_Q(\d)\.pdf", fname)
-        if m:
-            report_type, year, quarter = m.group(1), m.group(2), f"Q{m.group(3)}"
-            key = f"{year}_{quarter}"
-            quarter_files[key].add(report_type)
+    # Scan already existing files in subfolders
+    for subdir in os.listdir(RAW_DATA_DIR):
+        period_path = os.path.join(RAW_DATA_DIR, subdir)
+        if not os.path.isdir(period_path):
+            continue
+        for fname in os.listdir(period_path):
+            m = re.match(r"([a-z_]+)_(\d{4})_(Q[1-4]|12m)\.pdf", fname)
+            if m:
+                report_type, year, quarter = m.group(1), m.group(2), m.group(3)
+                key = f"{year}_{quarter}"
+                quarter_files[key].add(report_type)
 
-    # === Consistent summary reporting ===
     print("\n=== SUMMARY OF MISSING REPORTS PER QUARTER ===")
-    all_quarters = sorted(quarter_files.keys())
-    for quarter in all_quarters:
+    for quarter in sorted(quarter_files.keys()):
         got = quarter_files[quarter]
         miss = [k for k in CORE_REPORTS if k not in got]
         if miss:
             print(f"{quarter}: missing {miss}")
-    print("Done.\nAll PDFs in raw_data/abb_bank/")
+    print("Done.\nAll PDFs in raw_data/abb_bank/<year>_<quarter>/")
 
 if __name__ == "__main__":
     main()

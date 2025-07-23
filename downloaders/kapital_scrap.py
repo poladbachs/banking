@@ -55,11 +55,8 @@ def is_real_excel(content):
 def is_real_pdf(content):
     return content[:5] == b'%PDF-'
 
-def file_exists_anywhere(root, fname):
-    for dirpath, _, files in os.walk(root):
-        if fname in files:
-            return True
-    return False
+def file_exists_in_period(period_dir, fname):
+    return os.path.exists(os.path.join(period_dir, fname))
 
 def main():
     options = uc.ChromeOptions()
@@ -95,6 +92,10 @@ def main():
         if not quarter or not year or int(year) < 2020:
             continue
         period = f"{year}_{quarter}"
+        period_dir_raw = os.path.join(RAW_DATA_DIR, period)
+        period_dir_proc = os.path.join(PROCESSED_DIR, period)
+        os.makedirs(period_dir_raw, exist_ok=True)
+        os.makedirs(period_dir_proc, exist_ok=True)
 
         # Expand accordion
         try:
@@ -124,16 +125,14 @@ def main():
             if not en_name:
                 continue
 
+            fname = f"{en_name}_{period}.{ext}"
             if ext in ["xlsx", "xls"]:
-                period_dir = os.path.join(PROCESSED_DIR, period)
-                os.makedirs(period_dir, exist_ok=True)
-                fname = f"{en_name}_{period}.{ext}"
-                fpath = os.path.join(period_dir, fname)
-                if file_exists_anywhere(PROCESSED_DIR, fname):
-                    print(f"[SKIP] Already exists: {fname}")
+                fpath = os.path.join(period_dir_proc, fname)
+                if file_exists_in_period(period_dir_proc, fname):
+                    print(f"[SKIP] Already exists: {period}/{fname}")
                     per_quarter_files[period].add(en_name)
                     continue
-                print(f"Downloading: {fname}")
+                print(f"Downloading: {period}/{fname}")
                 r = session.get(href, headers=headers, timeout=20)
                 if not is_real_excel(r.content):
                     print(f"  [!] Not a real Excel (skipped): {href}")
@@ -142,20 +141,19 @@ def main():
                     out.write(r.content)
                 per_quarter_files[period].add(en_name)
             elif ext == "pdf":
-                fname = f"{en_name}_{period}.pdf" if en_name in CORE_6 else os.path.basename(urlparse(href).path)
-                fpath = os.path.join(RAW_DATA_DIR, fname)
-                if file_exists_anywhere(RAW_DATA_DIR, fname):
-                    print(f"[SKIP] Already exists: {fname}")
+                fpath = os.path.join(period_dir_raw, fname)
+                if file_exists_in_period(period_dir_raw, fname):
+                    print(f"[SKIP] Already exists: {period}/{fname}")
+                    per_quarter_files[period].add(en_name)
                     continue
-                print(f"[PDF] {fname}")
+                print(f"[PDF] {period}/{fname}")
                 r = session.get(href, headers=headers, timeout=20)
                 if not is_real_pdf(r.content):
                     print(f"  [!] Not a real PDF (skipped): {href}")
                     continue
                 with open(fpath, "wb") as out:
                     out.write(r.content)
-                if en_name in CORE_6:
-                    per_quarter_files[period].add(en_name)
+                per_quarter_files[period].add(en_name)
         time.sleep(0.5)
     driver.quit()
 
@@ -163,18 +161,17 @@ def main():
     per_quarter_files_disk = defaultdict(set)
     for dirpath, _, files in os.walk(PROCESSED_DIR):
         for fname in files:
-            m = re.match(r"([a-z_]+)_(20\d{2}_(?:Q[1-4]|12m))\.(xlsx|xls)", fname)
+            m = re.match(r"([a-z_]+)_(20\d{2}_Q[1-4]|20\d{2}_12m)\.(xlsx|xls)", fname)
             if m:
                 report_type, period, ext = m.groups()
                 per_quarter_files_disk[period].add(report_type)
     for dirpath, _, files in os.walk(RAW_DATA_DIR):
         for fname in files:
-            m = re.match(r"([a-z_]+)_(20\d{2}_(?:Q[1-4]|12m))\.pdf", fname)
+            m = re.match(r"([a-z_]+)_(20\d{2}_Q[1-4]|20\d{2}_12m)\.pdf", fname)
             if m:
                 report_type, period = m.groups()
                 per_quarter_files_disk[period].add(report_type)
 
-    # Use this new mapping for summary!
     print("\n=== SUMMARY OF MISSING REPORTS PER QUARTER ===")
     core_keys = list(CORE_6.keys())
     for period in sorted(per_quarter_files_disk.keys()):
@@ -182,7 +179,7 @@ def main():
         miss = [k for k in core_keys if k not in got]
         if miss:
             print(f"{period}: missing {miss}")
-    print("Done.\nAll Excels in processed_data/kapital_bank/<year>_<quarter>/, all PDFs in raw_data/kapital_bank/")
+    print("Done.\nAll Excels in processed_data/kapital_bank/<year>_<quarter>/, all PDFs in raw_data/kapital_bank/<year>_<quarter>/")
 
 if __name__ == "__main__":
     main()

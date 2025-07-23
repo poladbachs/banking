@@ -86,6 +86,8 @@ def main():
         "balance", "cash_flow", "credit_risk", "liquidity_risk", "interest_rate_risk", "currency_risk", "other_data"
     ]
     report = []
+    per_quarter_files = defaultdict(set)
+    present_periods = set()
 
     options = uc.ChromeOptions()
     driver = uc.Chrome(options=options)
@@ -108,7 +110,6 @@ def main():
 
     links = driver.find_elements(By.TAG_NAME, "a")
     files_on_site = defaultdict(dict)
-    present_periods = set()
     unmatched_links = []
 
     for link in links:
@@ -150,89 +151,75 @@ def main():
             href = urljoin(BASE_URL, href)
 
         save_name = f"{section_type}_{year}_{period}{ext}"
-        files_on_site[(year, period)][section_type] = (href, save_name, ext)
-        present_periods.add((year, period))
+        period_dir = os.path.join(RAW_DATA_DIR, f"{year}_{period}")
+        os.makedirs(period_dir, exist_ok=True)
+        fpath_actual = os.path.join(period_dir, save_name)
 
-    def period_key(x):
-        year, period = x
-        qorder = {"Q1": 1, "Q2": 2, "Q3": 3, "Q4": 4, "12m": 5}
-        return (int(year), qorder.get(period, 99))
-    periods_sorted = sorted(list(present_periods), key=period_key)
+        # Check exists in period subfolder or anywhere
+        already_exists = (
+            file_exists_anywhere(period_dir, save_name) or 
+            file_exists_anywhere(RAW_DATA_DIR, save_name) or 
+            file_exists_anywhere(PROCESSED_ROOT, save_name)
+        )
+        if already_exists:
+            report.append(f"[SKIP] Already exists: {save_name}")
+            per_quarter_files[f"{year}_{period}"].add(section_type)
+            present_periods.add((year, period))
+            continue
 
-    total_downloaded = 0
-    for y, q in periods_sorted:
-        is_after = is_2022_or_after(y, q)
-        if is_after:
-            expected_types = BASE_EXPECTED + ["capital_change", "capital_adequacy"]
-        else:
-            expected_types = BASE_EXPECTED + ["capital_change"]
+        # Download and save
+        try:
+            print(f"    Downloading: {save_name}")
+            r = session.get(href, headers=headers, timeout=20)
+            if (save_name.endswith(".pdf") and not r.content.startswith(b'%PDF-')) or (
+                save_name.endswith(".xlsx") and r.content[:2] != b'PK'
+            ):
+                report.append(f"[SKIP_CORRUPT] {save_name}")
+                continue
+            with open(fpath_actual, "wb") as out:
+                out.write(r.content)
+            report.append(f"[OK] {save_name}")
+            per_quarter_files[f"{year}_{period}"].add(section_type)
+            present_periods.add((year, period))
+        except Exception as e:
+            report.append(f"[ERROR] {save_name}: {e}")
+            continue
 
-        found_types = files_on_site.get((y, q), {})
-        for typ in expected_types:
-            on_site = [k for k in found_types.keys() if k == typ]
-            file_downloaded = False
-            fname_pdf = f"{typ}_{y}_{q}.pdf"
-            fname_xlsx = f"{typ}_{y}_{q}.xlsx"
-            fname_xls = f"{typ}_{y}_{q}.xls"
-            # Check if file already exists anywhere (future proof)
-            already_exists = any(
-                file_exists_anywhere(RAW_DATA_DIR, fname)
-                for fname in [fname_pdf, fname_xlsx, fname_xls]
-            ) or any(
-                file_exists_anywhere(PROCESSED_ROOT, fname)
-                for fname in [fname_xlsx, fname_xls]
-            )
-            if on_site and not already_exists:
-                href, actual_fname, ext = found_types[typ]
-                fpath_actual = os.path.join(RAW_DATA_DIR, actual_fname)
-                try:
-                    print(f"    Downloading: {actual_fname}")
-                    r = session.get(href, headers=headers, timeout=20)
-                    if (actual_fname.endswith(".pdf") and not r.content.startswith(b'%PDF-')) or (
-                        actual_fname.endswith(".xlsx") and r.content[:2] != b'PK'
-                    ):
-                        report.append(f"[SKIP_CORRUPT] {actual_fname}")
-                        continue
-                    with open(fpath_actual, "wb") as out:
-                        out.write(r.content)
-                    report.append(f"[OK] {actual_fname}")
-                    total_downloaded += 1
-                except Exception as e:
-                    report.append(f"[ERROR] {actual_fname}: {e}")
-                    continue
-                file_downloaded = True
-            elif already_exists:
-                report.append(f"[SKIP] Already exists: {typ}_{y}_{q}")
-                file_downloaded = True
-            # For 2022 Q1+ (and after), if capital_adequacy missing but capital_change exists, RENAME ON DISK!
-            if (typ == "capital_adequacy" and is_after and not file_downloaded):
-                moved = False
-                for ext2 in VALID_EXTENSIONS:
-                    cap_change_path = os.path.join(RAW_DATA_DIR, f"capital_change_{y}_{q}{ext2}")
-                    cap_adequacy_path = os.path.join(RAW_DATA_DIR, f"capital_adequacy_{y}_{q}{ext2}")
-                    if os.path.exists(cap_change_path) and not os.path.exists(cap_adequacy_path):
-                        shutil.move(cap_change_path, cap_adequacy_path)
-                        report.append(f"[RENAME] capital_change_{y}_{q}{ext2} → capital_adequacy_{y}_{q}{ext2}")
-                        total_downloaded += 1
-                        moved = True
-                        break
-            elif not file_downloaded and not (typ == "capital_adequacy" and is_after):
-                report.append(f"[MISSING_ON_SITE] {typ}_{y}_{q}.pdf")
+    driver.quit()
 
     print("\n=== FULL REPORT ===")
     for line in report:
         print(line)
 
-    print("\nSUMMARY REPORT")
-    print(f"Total files downloaded: {total_downloaded}")
-    missing = len([l for l in report if l.startswith("[MISSING_ON_SITE]")])
-    skip = len([l for l in report if l.startswith("[SKIP")])
-    error = len([l for l in report if l.startswith("[ERROR]")])
-    renamed = len([l for l in report if l.startswith("[RENAME]")])
-    print(f"Missing/Skipped: {missing + skip + error}")
-    print(f"Renamed: {renamed}")
+    # FINAL MISSING SUMMARY PER QUARTER (true future-proof)
+    print("\n=== SUMMARY OF MISSING REPORTS PER QUARTER ===")
+    for (year, period) in sorted(present_periods):
+        is_after = is_2022_or_after(year, period)
+        if is_after:
+            expected_types = BASE_EXPECTED + ["capital_change", "capital_adequacy"]
+        else:
+            expected_types = BASE_EXPECTED + ["capital_change"]
+        missing = []
+        for k in expected_types:
+            fname_pdf = f"{k}_{year}_{period}.pdf"
+            fname_xlsx = f"{k}_{year}_{period}.xlsx"
+            fname_xls = f"{k}_{year}_{period}.xls"
+            if not (
+                file_exists_anywhere(os.path.join(RAW_DATA_DIR, f"{year}_{period}"), fname_pdf)
+                or file_exists_anywhere(os.path.join(RAW_DATA_DIR, f"{year}_{period}"), fname_xlsx)
+                or file_exists_anywhere(os.path.join(RAW_DATA_DIR, f"{year}_{period}"), fname_xls)
+                or file_exists_anywhere(RAW_DATA_DIR, fname_pdf)
+                or file_exists_anywhere(RAW_DATA_DIR, fname_xlsx)
+                or file_exists_anywhere(RAW_DATA_DIR, fname_xls)
+                or file_exists_anywhere(PROCESSED_ROOT, fname_xlsx)
+                or file_exists_anywhere(PROCESSED_ROOT, fname_xls)
+            ):
+                missing.append(k)
+        if missing:
+            print(f"{year}_{period}: missing {missing}")
 
-    print("\nBrowser will remain open for manual review. Close it when done.")
+    print("Done.")
+    print(f"Total files downloaded: {len([l for l in report if l.startswith('[OK]')])}")
 
 if __name__ == "__main__":
     main()
