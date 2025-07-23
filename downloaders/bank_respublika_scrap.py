@@ -32,7 +32,15 @@ QUARTER_MAP = {
     "I Rüb": "Q1", "II Rüb": "Q2", "III Rüb": "Q3", "IV Rüb": "Q4",
     "Rüb I": "Q1", "Rüb II": "Q2", "Rüb III": "Q3", "Rüb IV": "Q4"
 }
-QUARTER_PATTERN = r"(I{1,3}|IV)\s*Rüb"
+
+def file_exists_anywhere(report_type, year, quarter):
+    period = f"{year}_{quarter}"
+    fname_prefix = f"{report_type}_{period}"
+    for dirpath, _, files in os.walk(PROCESSED_ROOT):
+        for fname in files:
+            if fname.startswith(fname_prefix) and fname.endswith((".xlsx", ".xls")):
+                return True
+    return False
 
 def get_soup():
     r = requests.get(BASE_URL, timeout=20)
@@ -65,33 +73,31 @@ def extract_main_reports(soup, per_quarter_status):
                 q = QUARTER_MAP.get(rub)
                 if not q:
                     continue
-                quarter_id = f"{year}_{q}"
+                period = f"{year}_{q}"
+                fname = f"{en_name}_{period}.xlsx"
+                period_dir = os.path.join(PROCESSED_ROOT, period)
+                os.makedirs(period_dir, exist_ok=True)
+                dst = os.path.join(period_dir, fname)
+                if file_exists_anywhere(en_name, year, q):
+                    per_quarter_status[period][en_name] = f"[SKIP] Already exists: {period}/{fname}"
+                    continue
                 href = a.get("href")
                 if not href or not href.endswith((".xlsx", ".xls")):
                     continue
                 url = href if href.startswith("http") else f"https://www.bankrespublika.az{href}"
-                fname = f"{en_name}_{quarter_id}.xlsx"
-                period_dir = os.path.join(PROCESSED_ROOT, quarter_id)
-                os.makedirs(period_dir, exist_ok=True)
-                dst = os.path.join(period_dir, fname)
-                if os.path.exists(dst):
-                    per_quarter_status[quarter_id][en_name] = "[OK] already exists"
-                    continue
-                print(f"    Downloading: {fname}")
+                print(f"    Downloading: {period}/{fname}")
                 try:
                     r = requests.get(url, timeout=30)
                     if not r.ok or not r.content[:2] == b'PK':
-                        per_quarter_status[quarter_id][en_name] = "[SKIP_CORRUPT]"
+                        per_quarter_status[period][en_name] = f"[SKIP_CORRUPT] {period}/{fname}"
                         continue
                     with open(dst, "wb") as out:
                         out.write(r.content)
-                    per_quarter_status[quarter_id][en_name] = "[OK]"
+                    per_quarter_status[period][en_name] = f"[OK] {period}/{fname}"
                 except Exception as e:
-                    per_quarter_status[quarter_id][en_name] = f"[ERROR] {e}"
+                    per_quarter_status[period][en_name] = f"[ERROR] {period}/{fname}: {e}"
 
 def extract_risk_reports(soup, per_quarter_status):
-    # Find Əlavə hesabatlar section
-    # For each risk, locate p with risk name, then find year, then links
     risk_blocks = []
     for risk_az, risk_en in RISK_MAP.items():
         for p in soup.find_all("p"):
@@ -99,10 +105,8 @@ def extract_risk_reports(soup, per_quarter_status):
                 risk_blocks.append((risk_az, risk_en, p))
 
     for risk_az, risk_en, p in risk_blocks:
-        # Go upwards to find the year
         prev = p.find_previous_sibling("p")
         year = None
-        # Find year block
         while prev:
             prev_txt = prev.get_text(strip=True)
             if re.match(r"^20\d{2}$", prev_txt):
@@ -118,29 +122,29 @@ def extract_risk_reports(soup, per_quarter_status):
             q = QUARTER_MAP.get(rub)
             if not q:
                 continue
-            quarter_id = f"{year}_{q}"
+            period = f"{year}_{q}"
+            fname = f"{risk_en}_{period}.xlsx"
+            period_dir = os.path.join(PROCESSED_ROOT, period)
+            os.makedirs(period_dir, exist_ok=True)
+            dst = os.path.join(period_dir, fname)
+            if file_exists_anywhere(risk_en, year, q):
+                per_quarter_status[period][risk_en] = f"[SKIP] Already exists: {period}/{fname}"
+                continue
             href = a.get("href")
             if not href or not href.endswith((".xlsx", ".xls")):
                 continue
             url = href if href.startswith("http") else f"https://www.bankrespublika.az{href}"
-            fname = f"{risk_en}_{quarter_id}.xlsx"
-            period_dir = os.path.join(PROCESSED_ROOT, quarter_id)
-            os.makedirs(period_dir, exist_ok=True)
-            dst = os.path.join(period_dir, fname)
-            if os.path.exists(dst):
-                per_quarter_status[quarter_id][risk_en] = "[OK] already exists"
-                continue
-            print(f"    Downloading: {fname}")
+            print(f"    Downloading: {period}/{fname}")
             try:
                 r = requests.get(url, timeout=30)
                 if not r.ok or not r.content[:2] == b'PK':
-                    per_quarter_status[quarter_id][risk_en] = "[SKIP_CORRUPT]"
+                    per_quarter_status[period][risk_en] = f"[SKIP_CORRUPT] {period}/{fname}"
                     continue
                 with open(dst, "wb") as out:
                     out.write(r.content)
-                per_quarter_status[quarter_id][risk_en] = "[OK]"
+                per_quarter_status[period][risk_en] = f"[OK] {period}/{fname}"
             except Exception as e:
-                per_quarter_status[quarter_id][risk_en] = f"[ERROR] {e}"
+                per_quarter_status[period][risk_en] = f"[ERROR] {period}/{fname}: {e}"
 
 def main():
     soup = get_soup()
@@ -163,7 +167,6 @@ def main():
         else:
             print(f"All expected 9 reports found for {qid}")
 
-    # --- Compact missing summary ---
     print("\n=== SUMMARY OF MISSING REPORTS ===")
     any_missing = False
     for qid, stats in sorted(per_quarter_status.items()):

@@ -24,7 +24,19 @@ REPORT_TYPES = {
     "Currency Risk": "currency_risk"
 }
 
-YEAR_RANGE = list(range(2020, datetime.now().year + 1))  # 2020 to 2025 inclusive
+CORE_REPORTS = [
+    "balance_sheet",
+    "profit_and_loss",
+    "cash_flow",
+    "capital_change",
+    "capital_adequacy",
+    "interest_rate_risk",
+    "liquidity_risk",
+    "credit_risk",
+    "currency_risk"
+]
+
+YEAR_RANGE = list(range(2020, datetime.now().year + 1))
 
 def normalize_quarter_label(label):
     label = label.lower()
@@ -47,6 +59,12 @@ def scroll_and_click(driver, el):
     driver.execute_script("arguments[0].click();", el)
     time.sleep(1.2)
 
+def file_exists_anywhere(report_type, year, quarter):
+    period = f"{year}_{quarter}"
+    fname = f"bank_of_baku_{report_type}_{year}_{quarter}.xlsx"
+    folder = os.path.join(PROCESSED_DATA_DIR, period)
+    return os.path.exists(os.path.join(folder, fname))
+
 def main():
     driver = uc.Chrome()
     wait = WebDriverWait(driver, 10)
@@ -61,6 +79,7 @@ def main():
 
     report = []
     total_downloaded = 0
+    all_year_quarters = set()
 
     for display_name, internal_name in REPORT_TYPES.items():
         try:
@@ -81,7 +100,7 @@ def main():
                 year_text = year_header.text.strip()
                 year = extract_year(year_text)
                 if not year or year not in YEAR_RANGE:
-                    continue  # skip anything outside 2020–2025
+                    continue
 
                 scroll_and_click(driver, year_header)
                 print(f"  [INFO] Opened year {year}")
@@ -96,12 +115,13 @@ def main():
                     if not href or not quarter:
                         continue
                     period = f"{year}_{quarter}"
+                    all_year_quarters.add((year, quarter))
                     folder = os.path.join(PROCESSED_DATA_DIR, period)
                     os.makedirs(folder, exist_ok=True)
                     fname = f"bank_of_baku_{internal_name}_{year}_{quarter}.xlsx"
                     fpath = os.path.join(folder, fname)
                     if os.path.exists(fpath):
-                        report.append(f"[OK] {fname} (already exists)")
+                        report.append(f"[SKIP] Already exists: {period}/{fname}")
                         continue
 
                     try:
@@ -125,7 +145,14 @@ def main():
     print("\nSUMMARY REPORT")
     print(f"Total files downloaded: {total_downloaded}")
     missing = len([l for l in report if l.startswith('[SKIP') or l.startswith('[ERROR') or l.startswith('[MISSING')])
-    print(f"Missing/Skipped: {missing}")
+
+    print("\n=== SUMMARY OF MISSING CORE REPORTS PER QUARTER ===")
+    for year, quarter in sorted(all_year_quarters, reverse=True):
+        missing_core = [core for core in CORE_REPORTS if not file_exists_anywhere(core, year, quarter)]
+        if missing_core:
+            print(f"{year}_{quarter}: missing {missing_core}")
+
+    print(f"\nDone.\nAll Excels in processed_data/bank_of_baku/<year>_<quarter>/")
     driver.quit()
 
 if __name__ == "__main__":

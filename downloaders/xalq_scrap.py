@@ -7,8 +7,22 @@ from selenium.webdriver.common.by import By
 import undetected_chromedriver as uc
 
 BASE_URL = "https://xalqbank.az/az/ferdi/bank/bank-haqqinda-melumatlarin-aciqlanmasi/maliyye-gostericileri-tab?include=menu"
-RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'raw_data', 'xalq_bank')
+RAW_DATA_DIR = os.path.join("raw_data", "xalq_bank")
+PROCESSED_DATA_DIR = os.path.join("processed_data", "xalq_bank")
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
+os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
+
+CORE_REPORTS = [
+    "balance",
+    "capital_change",
+    "profit_and_loss",
+    "cash_flow",
+    "capital_adequacy",
+    "liquidity_risk",
+    "interest_rate_risk",
+    "currency_risk",
+    "credit_risk"
+]
 
 REPORT_TYPES = [
     ("Balans hesabatı", "balance"),
@@ -45,24 +59,41 @@ def get_year_period(text):
         period = "unknown"
     return year, period
 
+def file_exists_pdf(report_type, yyyy, quarter):
+    # Checks for PDF in RAW only
+    subfolder = f"{yyyy}_{quarter}"
+    fname = f"{report_type}_{yyyy}_{quarter}.pdf"
+    folder = os.path.join(RAW_DATA_DIR, subfolder)
+    return os.path.exists(os.path.join(folder, fname))
+
+def file_exists_excel(report_type, yyyy, quarter):
+    # Checks for xlsx/xls in PROCESSED only
+    subfolder = f"{yyyy}_{quarter}"
+    for ext in [".xlsx", ".xls"]:
+        fname = f"{report_type}_{yyyy}_{quarter}{ext}"
+        folder = os.path.join(PROCESSED_DATA_DIR, subfolder)
+        if os.path.exists(os.path.join(folder, fname)):
+            return True
+    return False
+
 def safe_click(driver, elem, header_offset=120):
-    """Scrolls to the element with offset and clicks via JS (avoids header/interception)."""
     driver.execute_script(
         "window.scrollTo(0, arguments[0].getBoundingClientRect().top + window.scrollY - arguments[1]);",
         elem, header_offset
     )
-    time.sleep(0.5)
+    time.sleep(0.4)
     driver.execute_script("arguments[0].click();", elem)
-    time.sleep(2.8)  # wait for page load
+    time.sleep(2.3)
 
 def main():
     report = []
     total_downloaded = 0
+    all_year_quarters = set()
 
     options = uc.ChromeOptions()
     driver = uc.Chrome(options=options)
     driver.get(BASE_URL)
-    time.sleep(4)  # Let the menu page fully load
+    time.sleep(4)
 
     session = requests.Session()
     for cookie in driver.get_cookies():
@@ -89,46 +120,62 @@ def main():
             info_text = link.text.strip()
             if not href or not any(href.lower().endswith(ext) for ext in VALID_EXTENSIONS):
                 continue
-            year, period = get_year_period(info_text)
-            if not year or period == "unknown" or int(year) < 2020:
+            year, quarter = get_year_period(info_text)
+            if not year or quarter == "unknown" or not year.isdigit() or int(year) < 2020:
                 continue
             ext = os.path.splitext(href.split('?')[0])[1].lower()
-            save_name = f"{en_name}_{year}_{period}{ext}"
-            fpath = os.path.join(RAW_DATA_DIR, save_name)
-            if os.path.exists(fpath):
-                report.append(f"[OK] {save_name}")
-                total_downloaded += 1
+            subfolder = f"{year}_{quarter}"
+            save_name = f"{en_name}_{year}_{quarter}{ext}"
+            all_year_quarters.add((year, quarter))
+            if ext == ".pdf":
+                period_dir = os.path.join(RAW_DATA_DIR, subfolder)
+                fpath = os.path.join(period_dir, save_name)
+                if file_exists_pdf(en_name, year, quarter):
+                    report.append(f"[SKIP] Already exists: {subfolder}/{save_name}")
+                    continue
+            elif ext in [".xlsx", ".xls"]:
+                period_dir = os.path.join(PROCESSED_DATA_DIR, subfolder)
+                fpath = os.path.join(period_dir, save_name)
+                if file_exists_excel(en_name, year, quarter):
+                    report.append(f"[SKIP] Already exists: {subfolder}/{save_name}")
+                    continue
+            else:
                 continue
+            os.makedirs(period_dir, exist_ok=True)
             try:
-                print(f"    Downloading: {save_name}")
+                print(f"    Downloading: {subfolder}/{save_name}")
                 r = session.get(href, headers=headers, timeout=20)
                 if (ext == ".pdf" and not r.content.startswith(b'%PDF-')) or (ext in [".xlsx", ".xls"] and r.content[:2] != b'PK'):
-                    report.append(f"[SKIP_CORRUPT] {save_name}")
+                    report.append(f"[SKIP_CORRUPT] {subfolder}/{save_name}")
                     continue
                 with open(fpath, "wb") as out:
                     out.write(r.content)
-                report.append(f"[OK] {save_name}")
+                report.append(f"[OK] {subfolder}/{save_name}")
                 total_downloaded += 1
             except Exception as e:
-                report.append(f"[ERROR] {save_name}: {e}")
+                report.append(f"[ERROR] {subfolder}/{save_name}: {e}")
 
         # Go BACK to menu page for next section
         driver.get(BASE_URL)
-        time.sleep(2.5)  # Let menu reload
+        time.sleep(2.3)
 
-    print("\n=== FULL XALQ-STYLE REPORT ===")
+    print("\n=== FULL XALQ BANK REPORT ===")
     for line in report:
         print(line)
 
-    print("\nSUMMARY REPORT")
+    # Summary of missing core reports, separate for PDF and Excel
+    print("\n=== SUMMARY OF MISSING CORE REPORTS PER QUARTER ===")
+    for year, quarter in sorted(all_year_quarters, reverse=True):
+        missing_pdfs = [core for core in CORE_REPORTS if not file_exists_pdf(core, year, quarter)]
+        missing_excels = [core for core in CORE_REPORTS if not file_exists_excel(core, year, quarter)]
+        if missing_pdfs:
+            print(f"{year}_{quarter}: missing PDFs: {missing_pdfs}")
+        if missing_excels:
+            print(f"{year}_{quarter}: missing Excels: {missing_excels}")
+
+    print(f"\nDone.\nAll PDFs in raw_data/xalq_bank/<year>_<quarter>/, Excels in processed_data/xalq_bank/<year>_<quarter>/")
     print(f"Total files downloaded: {total_downloaded}")
-    missing = len([l for l in report if l.startswith('[MISSING_ON_SITE]')])
-    skip = len([l for l in report if l.startswith('[SKIP')])
-    error = len([l for l in report if l.startswith('[ERROR]')])
-    renamed = len([l for l in report if l.startswith('[RENAME]')])
-    print(f"Missing/Skipped: {missing + skip + error}")
-    print(f"Renamed: {renamed}")
-    print("\nBrowser will remain open for manual review. Close it when done.\n")
+
     driver.quit()
 
 if __name__ == "__main__":

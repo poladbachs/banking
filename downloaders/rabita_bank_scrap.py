@@ -8,7 +8,6 @@ BASE = "https://www.rabitabank.com"
 OUTDIR = os.path.join("processed_data", "rabitabank")
 os.makedirs(OUTDIR, exist_ok=True)
 
-# Each key: lists of core words (must all be in the title, in any order)
 CORE_9 = {
     "balance_sheet":     [["maliyy", "veziyyet"]],
     "capital_adequacy":  [["kapital", "adekvat"]],
@@ -22,7 +21,6 @@ CORE_9 = {
 }
 
 def normalize(text):
-    # Lowercase, ascii, remove diacritics for reliable matching
     rep = (
         ("ə", "e"), ("ı", "i"), ("ü", "u"), ("ö", "o"), ("ç", "c"), ("ş", "s"), ("ğ", "g"),
         ("İ", "i"), ("Ü", "u"), ("Ö", "o"), ("Ç", "c"), ("Ş", "s"), ("Ğ", "g"),
@@ -44,21 +42,17 @@ def matches_keywords(label):
     return None
 
 def extract_quarter(label):
-    # Accepts both "Rüb" and "Rüb", etc.
     m = re.search(r'([IVX]+)\s*[-–,]?\s*[rüub]+', label, re.I)
-    if not m:
-        return None
+    if not m: return None
     roman = m.group(1).replace("X", "10").upper()
     mapping = {"I": "Q1", "II": "Q2", "III": "Q3", "IV": "Q4"}
     return mapping.get(roman)
 
 def extract_year_from_url(url):
     m = re.search(r'reports[-_](\d{4})', url)
-    if m:
-        return m.group(1)
+    if m: return m.group(1)
     m2 = re.search(r'(\d{4})-ci-ilin-hesabatlari', url)
-    if m2:
-        return m2.group(1)
+    if m2: return m2.group(1)
     return None
 
 def main():
@@ -79,9 +73,8 @@ def main():
         except Exception as e:
             print(f"[ERROR] couldn't fetch {menu_url}: {e}")
 
-    done = set()
-    quarter_files = {}
-
+    # { period: {core_name: present_bool} }
+    status = {}
     for year_url in year_links:
         year_full_url = year_url if year_url.startswith("http") else urljoin(BASE, year_url)
         year = extract_year_from_url(year_url)
@@ -104,37 +97,57 @@ def main():
             quarter = extract_quarter(label)
             if not quarter or not year:
                 continue
-            key = (year, quarter, en_name)
-            if key in done:
+            period = f"{year}_{quarter}"
+            fname = f"{en_name}_{year}_{quarter}.xlsx"
+            period_dir = os.path.join(OUTDIR, period)
+            os.makedirs(period_dir, exist_ok=True)
+            path = os.path.join(period_dir, fname)
+            if os.path.exists(path):
+                print(f"[SKIP] Already exists: {period}/{fname}")
+                status.setdefault(period, {})[en_name] = True
                 continue
-            done.add(key)
+            # Download
             a = item.find("a", class_="reports-other__link")
             if not a or not a.get("href"):
                 continue
             file_url = urljoin(BASE, a["href"])
-            period_dir = os.path.join(OUTDIR, f"{year}_{quarter}")
-            os.makedirs(period_dir, exist_ok=True)
-            fname = f"{en_name}_{year}_{quarter}.xlsx"
-            path = os.path.join(period_dir, fname)
-            if os.path.exists(path):
-                print(f"[SKIP] Already exists: {fname}")
-                quarter_files.setdefault((year, quarter), set()).add(en_name)
-                continue
-            print(f"Downloading {en_name} for {year} {quarter} -> {fname}")
+            print(f"Downloading {en_name} for {period} -> {fname}")
             try:
                 file_r = session.get(file_url, timeout=30)
                 with open(path, "wb") as out:
                     out.write(file_r.content)
-                quarter_files.setdefault((year, quarter), set()).add(en_name)
+                status.setdefault(period, {})[en_name] = True
             except Exception as e:
                 print(f"[ERROR] {file_url}: {e}")
 
+    # --------- FIX: Now rescan ALL folders for ALL files (even if manually added) ---------
+    for period_folder in os.listdir(OUTDIR):
+        abs_period = os.path.join(OUTDIR, period_folder)
+        if not os.path.isdir(abs_period):
+            continue
+        for core in CORE_9:
+            expected = f"{core}_{period_folder}.xlsx"
+            if os.path.exists(os.path.join(abs_period, expected)):
+                status.setdefault(period_folder, {})[core] = True
+
+    # Check for all 9 reports in each period
     print("\n=== SUMMARY OF MISSING REPORTS PER QUARTER ===")
-    for (year, quarter), files in sorted(quarter_files.items()):
-        miss = [x for x in CORE_9.keys() if x not in files]
-        if miss:
-            print(f"{year}_{quarter}: missing {miss}")
-    print("Done.")
+    all_periods = sorted(os.listdir(OUTDIR))
+    for period in all_periods:
+        period_path = os.path.join(OUTDIR, period)
+        if not os.path.isdir(period_path):
+            continue
+        present = set(status.get(period, {}).keys())
+        missing = [c for c in CORE_9.keys() if c not in present]
+        if missing:
+            print(f"{period}: missing {missing}")
+        else:
+            print(f"{period}: all 9 core reports present")
+
+    print("\nDone.")
 
 if __name__ == "__main__":
     main()
+
+
+### MAYBE DECOMPOSE 2020 Q1 RABITA BANK INTO REPROT TYPES IDK
