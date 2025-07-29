@@ -1,9 +1,8 @@
 beautifulsoup4
 requests
-camelot-py[cv]
 pandas
 openpyxl
 selenium
-pdfplumber
 xlrd
-tabula-py
+streamlit 
+streamlit-lottie

@@ -87,6 +87,9 @@ def main():
 
     options = uc.ChromeOptions()
     driver = uc.Chrome(options=options)
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
     driver.get(BASE_URL)
     time.sleep(4)
 

@@ -90,6 +90,9 @@ def main():
     present_periods = set()
 
     options = uc.ChromeOptions()
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
     driver = uc.Chrome(options=options)
     driver.get(BASE_URL)
     time.sleep(3)

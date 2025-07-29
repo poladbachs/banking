@@ -60,6 +60,9 @@ def file_exists_in_period(period_dir, fname):
 
 def main():
     options = uc.ChromeOptions()
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
     options.add_argument("--no-sandbox")
     driver = uc.Chrome(options=options)
     driver.get(BASE_URL)

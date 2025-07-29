@@ -66,7 +66,11 @@ def file_exists_anywhere(report_type, year, quarter):
     return os.path.exists(os.path.join(folder, fname))
 
 def main():
-    driver = uc.Chrome()
+    options = uc.ChromeOptions()
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    driver = uc.Chrome(options=options)
     wait = WebDriverWait(driver, 10)
     driver.get(BASE_URL)
     print("[DEBUG] Loaded Bank of Baku page")
