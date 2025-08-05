@@ -4,6 +4,7 @@ import base64
 import streamlit as st
 import io, zipfile
 from datetime import datetime
+import re
 
 # ---- CONFIG ----
 st.set_page_config(
@@ -35,7 +36,6 @@ ARRANGERS = [
     ("xalq_bank", "arrangers/xalq_arrange.py"),
     ("abb_bank", "arrangers/abb_arrange.py"),
 ]
-
 SCRAPERS = [
     "downloaders/pasha_scrap.py",
     "downloaders/kapital_scrap.py",
@@ -49,8 +49,6 @@ SCRAPERS = [
     "downloaders/xalq_scrap.py",
     "downloaders/cbar_scrap.py",
 ]
-
-
 
 def zip_processed_data():
     zip_buffer = io.BytesIO()
@@ -68,7 +66,6 @@ def all_banks_fully_arranged():
         if needs_acrobat(folder) or needs_arrange(folder) or not is_fully_arranged(folder):
             return False
     return True
-
 
 def load_logo_b64(path):
     if not os.path.exists(path):
@@ -155,6 +152,48 @@ h1, h2, h3 { color: #fff !important; font-weight: 800 !important; }
 .status-badge.arrange { color:#FFEF00;background:#333220;box-shadow:0 1px 9px #fff13377;}
 .status-badge.error { color:#FF4E85;background:#452233;box-shadow:0 1px 9px #ff1c6640;}
 .status-badge.skip { color:#55A3FF;background:#23394a;}
+.expander-badge { 
+    font-size: 1em;
+    margin: 5px 8px 5px 0;
+    border-radius: 6px;
+    padding: 2px 12px;
+    font-weight: 600;
+    display: inline-block;
+    color: #191b23;
+    background: #C8FCEA;
+    border: 1px solid #86ffd2;
+    box-shadow: 0 1px 3px #00FFA366;
+}
+.expander-badge.ready { background: #8effb8; color: #1a2922; border-color: #39e48b; }
+.expander-badge.arrange { background: #fff799; color: #695c13; border-color: #ffe054; }
+.expander-badge.acrobat { background: #ffe1e8; color: #b50045; border-color: #ff74a7; }
+.expander-badge.missing { background: #f1f2f6; color: #5a5a5a; border-color: #d0d3d7; }
+
+.quarters-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 9px;
+    margin: 4px 0 0 0;
+    padding-bottom: 2px;
+}
+
+.stExpanderHeader { color: #00FFA3!important; font-weight:700!important; }
+.inline-expander details summary {
+    cursor: pointer;
+    outline: none;
+    font-size: 1em;
+    font-weight: 700;
+    color: #00FFA3;
+    display: inline;
+}
+.inline-expander details[open] summary {
+    color: #DC1FFF;
+}
+.inline-expander details {
+    display: inline-block;
+    margin-left: 16px;
+    vertical-align: middle;
+}
 hr { border: none; height:1px; background: #33334A; margin: 2.1rem 0; }
 .footer-custom {
     margin-top: 4em; color: #a2a9b7; font-weight: 500; font-size: 1.09em; text-align: center;
@@ -166,7 +205,8 @@ hr { border: none; height:1px; background: #33334A; margin: 2.1rem 0; }
   margin-bottom: 5px;
   margin-left:auto; margin-right:auto;
 }
-@keyframes spin {from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes spin {from{transform:rotate(0deg);}to{transform:rotate(360deg);}
+}
 a.neon-btn {
   display: inline-block;
   padding: 0.7rem 1.7rem;
@@ -236,16 +276,76 @@ def needs_arrange(bank_folder):
     return periods_needed
 
 def is_fully_arranged(bank_folder):
-    # If Acrobat step is needed
     if needs_acrobat(bank_folder):
         return False
-
-    # If arrangement step is needed
     if needs_arrange(bank_folder):
         return False
-
     processed = os.path.join("processed_data", bank_folder)
     return os.path.exists(processed) and any(os.scandir(processed))
+
+def list_quarters_status(bank_folder):
+
+    # CBAR special handling: only display the latest available period (from filename)
+    if bank_folder.lower() == "cbar":
+        processed = os.path.join("processed_data", bank_folder)
+        if os.path.exists(processed):
+            files = [f for f in os.listdir(processed) if f.startswith("CBAR_") and f.endswith(".xlsx")]
+            if files:
+                # Sort by modified time, most recent first
+                files = sorted(files, key=lambda f: os.path.getmtime(os.path.join(processed, f)), reverse=True)
+                latest = files[0]
+                # Extract period (e.g., July_2024 → July 2024)
+                m = re.match(r"CBAR_(\w+_\d{4})\.xlsx", latest)
+                period = m.group(1).replace("_", " ") if m else "Latest"
+                return [(period, "ready")]
+        # If nothing found, show no quarters
+        return []
+    
+    raw = os.path.join("raw_data", bank_folder)
+    processed = os.path.join("processed_data", bank_folder)
+    # Get all unique period folders (union of both dirs)
+    period_set = set()
+    if os.path.exists(raw):
+        period_set.update([d for d in os.listdir(raw) if os.path.isdir(os.path.join(raw, d))])
+    if os.path.exists(processed):
+        period_set.update([d for d in os.listdir(processed) if os.path.isdir(os.path.join(processed, d))])
+    quarters = []
+    for period in sorted(period_set):
+        raw_p = os.path.join(raw, period)
+        processed_p = os.path.join(processed, period)
+        # PDF detection in raw, Excel detection in processed, fallback logic
+        pdfs = []
+        excels = []
+        if os.path.isdir(raw_p):
+            pdfs = [f for f in os.listdir(raw_p) if f.lower().endswith('.pdf')]
+        if os.path.isdir(processed_p):
+            excels = [f for f in os.listdir(processed_p) if f.lower().endswith(('.xlsx','.xls'))]
+        if pdfs and not excels:
+            quarters.append((period, "acrobat"))
+        elif not excels:
+            quarters.append((period, "arrange"))
+        else:
+            quarters.append((period, "ready"))
+    return quarters
+
+def render_quarters_expander(bank_folder, key):
+    quarters = list_quarters_status(bank_folder)
+    with st.expander("View Quarters", expanded=False):
+        if quarters:
+            badges = ""
+            for q, s in quarters:
+                css_class = "ready" if s=="ready" else "arrange" if s=="arrange" else "acrobat" if s=="acrobat" else "missing"
+                status_text = "Ready" if s=="ready" else "Needs Arrange" if s=="arrange" else "Acrobat Needed" if s=="acrobat" else "Missing"
+                badges += f"<span class='expander-badge {css_class}' title='{status_text}'>{q}</span>"
+            st.markdown(
+                f"<div class='quarters-grid'>{badges}</div>",
+                unsafe_allow_html=True
+            )
+        else:
+            st.markdown(
+                "<div class='quarters-grid'><span class='expander-badge missing'>No quarters</span></div>",
+                unsafe_allow_html=True
+            )
 
 # ---- SCRAPE LOCK STATE ----
 if 'scraping_any' not in st.session_state:
@@ -314,35 +414,44 @@ scrape_clicked = st.button("🔄 Run All Scrapers", disabled=st.session_state['s
 error_logs = [None] * len(BANKS)
 
 for idx, (name, folder) in enumerate(BANKS):
-    colA, colB = st.columns([0.7, 0.3])
-    with colA:
-        acrobat_periods = needs_acrobat(folder)
-        arrange_periods = needs_arrange(folder)
-        if acrobat_periods:
-            period_str = ', '.join(acrobat_periods)
-            badge_html = "<span class='status-badge arrange'>🟨 Acrobat Needed</span>"
-            msg = (
-                f"{badge_html} {render_bank_row('', folder, name)} <span style='color:#aaa;font-size:0.96em'>({period_str})</span><br>"
-                "<b style='color:#FFEF00;'>PDF files detected. Open <u>Adobe Acrobat Wizard</u>. It will convert PDFs to Excel.<br>Only then proceed to <u>Arrange Files</u>.</b>"
-            )
-            st.markdown(msg, unsafe_allow_html=True)
-        elif arrange_periods:
-            period_str = ', '.join(arrange_periods)
-            badge_html = "<span class='status-badge arrange'>🟨 Needs Arrange</span>"
-            st.markdown(
-                render_bank_row(badge_html, folder, name) + f" <span style='color:#aaa;font-size:0.96em'>({period_str})</span>",
-                unsafe_allow_html=True
-            )
-        elif is_fully_arranged(folder):
-            badge_html = "<span class='status-badge'>✅ Ready</span>"
-            st.markdown(render_bank_row(badge_html, folder, name), unsafe_allow_html=True)
-        elif has_any_data(folder):
-            badge_html = "<span class='status-badge'>🟩 Downloaded</span>"
-            st.markdown(render_bank_row(badge_html, folder, name), unsafe_allow_html=True)
-        else:
-            badge_html = "<span class='status-badge error'>❌ Not Downloaded</span>"
-            st.markdown(render_bank_row(badge_html, folder, name), unsafe_allow_html=True)
-    with colB:
+    col1, col2, col3, col4 = st.columns([0.15, 0.20, 0.48, 0.17])
+    if needs_acrobat(folder):
+        badge_html = "<span class='status-badge arrange'>🟨 Acrobat Needed</span>"
+    elif needs_arrange(folder):
+        badge_html = "<span class='status-badge arrange'>🟨 Needs Arrange</span>"
+    elif is_fully_arranged(folder):
+        badge_html = "<span class='status-badge'>✅ Fully Arranged</span>"
+    elif has_any_data(folder):
+        badge_html = "<span class='status-badge'>🟩 Downloaded</span>"
+    else:
+        badge_html = "<span class='status-badge error'>❌ Not Downloaded</span>"
+
+    with col1:
+        st.markdown(
+            f"<div style='display:flex;align-items:center;min-height:54px'>{badge_html}</div>",
+            unsafe_allow_html=True
+        )
+    with col2:
+        logo_b64 = get_bank_logo_b64(folder)
+        logo_html = (
+            f"<img src='data:image/png;base64,{logo_b64}' "
+            "style='height:27px;width:auto;margin-right:10px;border-radius:5px;display:inline-block;'>"
+            if logo_b64 else ""
+        )
+        st.markdown(
+            f"""
+            <div style="display:flex;align-items:center;min-height:54px;">
+                {logo_html}<b style="font-size:1.08em;display:inline-block;vertical-align:middle;">{name}</b>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with col3:
+        # EXPANDER
+        render_quarters_expander(folder, key=f"exp_{idx}")
+    with col4:
+        # SCRAPE BUTTON
         indiv_btn = st.button("Scrape", key=f"scrape_{idx}", disabled=st.session_state['scraping_any'])
         if indiv_btn:
             with st.spinner(f"Scraping {name}…"):
@@ -397,16 +506,44 @@ if arrange_clicked:
 # ---- STEP 3: FINAL BANK STATUS ----
 st.markdown("---")
 st.subheader("3️⃣ Final Bank Status")
-for name, folder in BANKS:
+for idx, (name, folder) in enumerate(BANKS):
+    col1, col2, col3, col4 = st.columns([0.15, 0.20, 0.48, 0.17])
     if needs_acrobat(folder):
         badge_html = "<span class='status-badge arrange'>🟨 Acrobat Needed</span>"
     elif needs_arrange(folder):
         badge_html = "<span class='status-badge arrange'>🟨 Needs Arrange</span>"
     elif is_fully_arranged(folder):
         badge_html = "<span class='status-badge'>✅ Fully Arranged</span>"
+    elif has_any_data(folder):
+        badge_html = "<span class='status-badge'>🟩 Downloaded</span>"
     else:
-        badge_html = "<span class='status-badge error'>❌ No Data</span>"
-    st.markdown(render_bank_row(badge_html, folder, name), unsafe_allow_html=True)
+        badge_html = "<span class='status-badge error'>❌ Not Downloaded</span>"
+
+    with col1:
+        st.markdown(
+            f"<div style='display:flex;align-items:center;min-height:54px'>{badge_html}</div>",
+            unsafe_allow_html=True
+        )
+    with col2:
+        logo_b64 = get_bank_logo_b64(folder)
+        logo_html = (
+            f"<img src='data:image/png;base64,{logo_b64}' "
+            "style='height:27px;width:auto;margin-right:10px;border-radius:5px;display:inline-block;'>"
+            if logo_b64 else ""
+        )
+        st.markdown(
+            f"""
+            <div style="display:flex;align-items:center;min-height:54px;">
+                {logo_html}<b style="font-size:1.08em;display:inline-block;vertical-align:middle;">{name}</b>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with col3:
+        render_quarters_expander(folder, key=f"final_{idx}")
+    with col4:
+        pass  # Nothing here for now
 
 # ---- STEP 4: EXPORT ----
 st.markdown("---")

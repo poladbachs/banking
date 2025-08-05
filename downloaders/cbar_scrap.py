@@ -24,6 +24,28 @@ MONTHS_EN = [
     "January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"
 ]
+
+from openpyxl import load_workbook
+
+CBAR_SHEETS_KEEP = [
+    "2.7", "2.7.d.", "2.8", "2.8.1", "2.8.2", "2.8.3",
+    "5.2", "5.3", "5.4", "5.6", "5.7", "6.1", "6.2"
+]
+
+
+
+def filter_cbar_sheets(filepath, sheets_to_keep=CBAR_SHEETS_KEEP):
+    wb = load_workbook(filepath)
+    sheets_all = wb.sheetnames
+    for name in sheets_all:
+        if name not in sheets_to_keep:
+            std = wb[name]
+            wb.remove(std)
+    wb.save(filepath)
+    wb.close()
+    print(f"[INFO] Filtered to sheets: {sheets_to_keep}")
+
+
 MONTH_MAP = {az: en for az, en in zip(MONTHS_AZ, MONTHS_EN)}
 
 def download_latest_cbar_excel(download_to=CBAR_LOCAL_FILE):
@@ -100,20 +122,28 @@ def store_hash(hashval):
         f.write(hashval)
 
 def update_cbar_file():
-    TMP_FILE, period_full, period_full_en = download_latest_cbar_excel(download_to=CBAR_LOCAL_FILE)
+    TMP_FILE, period_full, period_full_en = download_latest_cbar_excel()
     new_hash = file_hash(TMP_FILE)
 
     prev_hash = load_stored_hash()
-    if prev_hash == new_hash and os.path.exists(CBAR_LOCAL_FILE):
+    # filename for new period
+    clean_period = period_full_en.replace(" ", "_")
+    new_fname = f"CBAR_{clean_period}.xlsx"
+    new_fpath = os.path.join(CBAR_DIR, new_fname)
+
+    if prev_hash == new_hash and os.path.exists(new_fpath):
         print(f"[INFO] No update. CBAR Excel unchanged for period: {period_full} / {period_full_en}")
         os.remove(TMP_FILE)
     else:
         print(f"[INFO] New data detected or no previous file. Updating local CBAR file for period: {period_full} / {period_full_en}")
-        if os.path.exists(CBAR_LOCAL_FILE):
-            os.remove(CBAR_LOCAL_FILE)
-        os.rename(TMP_FILE, CBAR_LOCAL_FILE)
+        # Remove all old CBAR files, only keep the latest
+        for f in os.listdir(CBAR_DIR):
+            if f.endswith(".xlsx"):
+                os.remove(os.path.join(CBAR_DIR, f))
+        os.rename(TMP_FILE, new_fpath)
+        filter_cbar_sheets(new_fpath)
         store_hash(new_hash)
-        print(f"[INFO] CBAR_LATEST.xlsx now up to date. Period: {period_full} / {period_full_en}")
+        print(f"[INFO] {new_fname} now up to date. Period: {period_full} / {period_full_en}")
     print(f"[INFO] Current local hash: {new_hash}")
 
 if __name__ == "__main__":
