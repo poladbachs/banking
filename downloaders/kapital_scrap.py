@@ -18,8 +18,6 @@ CORE_6 = {
     "balance_sheet":     [["balans", "hesabat"]],
     "capital_adequacy":  [["kapital", "adekvat"]],
     "profit_loss":       [["mənfəət", "zərər"]],
-    "capital_change":    [["kapital", "dəyiş"]],
-    "cash_flow":         [["pul", "hərəkət"]],
     "other_general_info":[["digər", "ümumi", "məlumat"]],
 }
 

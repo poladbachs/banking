@@ -16,13 +16,10 @@ os.makedirs(RAW_DATA_DIR, exist_ok=True)
 os.makedirs(PROCESSED_ROOT, exist_ok=True)
 
 SECTION_MAP = {
-    "maliyyə hesabatları": "balance",
-    "pul vəsaitlərinin hərəkəti": "cash_flow",
+    "maliyyə hesabatları": "balance_sheet",
     "kapital dəyişmələri": "capital_change",
     "kredit riski": "credit_risk",
-    "likvidlik riski": "liquidity_risk",
     "valyuta riski": "currency_risk",
-    "faiz riski": "interest_rate_risk",
     "digər maliyyə məlumatları": "other_data",
     "digər maliyyə məlumatı": "other_data",
     "risk dərəcəsi üzrə ölçülmüş aktivlərdən asılı olan kapitalın adekvatlıq standartlarının (əmsallarının) hesablanması": "capital_adequacy",
@@ -83,7 +80,7 @@ def file_exists_anywhere(root, fname):
 
 def main():
     BASE_EXPECTED = [
-        "balance", "cash_flow", "credit_risk", "liquidity_risk", "interest_rate_risk", "currency_risk", "other_data"
+        "balance_sheet", "cash_flow", "credit_risk", "currency_risk", "other_data"
     ]
     report = []
     per_quarter_files = defaultdict(set)

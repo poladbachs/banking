@@ -37,16 +37,16 @@ ARRANGERS = [
     ("abb_bank", "arrangers/abb_arrange.py"),
 ]
 SCRAPERS = [
-    "downloaders/pasha_scrap.py",
+    "downloaders/abb_scrap.py",
     "downloaders/kapital_scrap.py",
+    "downloaders/pasha_scrap.py",
+    "downloaders/xalq_scrap.py",
+    "downloaders/unibank_scrap.py",
+    "downloaders/bank_respublika_scrap.py",
+    "downloaders/accessbank_scrap.py",
+    "downloaders/rabita_bank_scrap.py",
     "downloaders/yelobank_scrap.py",
     "downloaders/bank_of_baku_scrap.py",
-    "downloaders/bank_respublika_scrap.py",
-    "downloaders/unibank_scrap.py",
-    "downloaders/accessbank_scrap.py",
-    "downloaders/abb_scrap.py",
-    "downloaders/rabita_bank_scrap.py",
-    "downloaders/xalq_scrap.py",
     "downloaders/cbar_scrap.py",
 ]
 
@@ -73,7 +73,7 @@ def load_logo_b64(path):
     data = open(path, "rb").read()
     return base64.b64encode(data).decode()
 
-logo_b64 = load_logo_b64("Pasha_Holding_logo.png")
+# logo_b64 = load_logo_b64("Pasha_Holding_logo.png")
 
 # ---- BANK LOGO UTILS ----
 def get_bank_logo_b64(folder_key):
@@ -231,9 +231,6 @@ with col1:
         "Automated quarterly financial data pipeline for major AZE banks and the Central Bank.  \n"
         "One-click updates, no manual overhead."
     )
-with col2:
-    if logo_b64:
-        st.markdown(f"<img src='data:image/png;base64,{logo_b64}' class='rotating-logo'/>", unsafe_allow_html=True)
 
 st.markdown("<hr>", unsafe_allow_html=True)
 

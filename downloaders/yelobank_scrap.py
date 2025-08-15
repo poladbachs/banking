@@ -15,27 +15,18 @@ os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 CORE_REPORTS = [
     "balance_sheet",
     "profit_loss",
-    "cash_flow",
     "credit_risk",
     "currency_risk",
-    "interest_rate_risk",
-    "liquidity_risk",
     "capital_adequacy",
-    "capital_change"
 ]
 
 STRICT_NAMES = {
     "Statement of financial position": "balance_sheet",
     "Balance sheet": "balance_sheet",
     "Profit and loss statement": "profit_loss",
-    "Cash flow statement": "cash_flow",
     "Credit risk": "credit_risk",
     "Currency risk": "currency_risk",
-    "Interest rate risk": "interest_rate_risk",
-    "Liquidity risk": "liquidity_risk",
     "Adequacy of capital": "capital_adequacy",
-    "Report on changes in capital structure": "capital_change",
-    "Changes in equity": "capital_change",
 }
 
 VALID_EXTENSIONS = [".pdf", ".xlsx", ".xls"]

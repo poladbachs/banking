@@ -15,26 +15,20 @@ os.makedirs(RAW_DATA_DIR, exist_ok=True)
 CORE_REPORTS = [
     "balance_sheet",
     "profit_and_loss",
-    "cash_flow",
     "capital_adequacy",
-    "liquidity_risk",
     "portfolio_share",
     "credit_risk",
-    "interest_rate_risk",
     "currency_risk"
 ]
 SECTION_MAP = {
     "maliyyə vəziyyəti": "balance_sheet",
     "mənfəət və zərər": "profit_and_loss",
-    "pul vəsaitlərinin hərəkəti": "cash_flow",
     "kapital adekvatlığı": "capital_adequacy",
     "risk hesabatları": "risk_reports",
-    "likvidlik riski": "liquidity_risk",
 }
 RISK_REPORTS_AZ_TO_EN = {
     "Kreditlərin, həmçinin vaxtı keçmiş kreditlərin portfeldə payı və onun iqtisadi sektorlar üzrə göstəriciləri": "portfolio_share",
     "Kredit riski - kreditlərin təminat üzrə bölgüsü": "credit_risk",
-    "Faiz riski": "interest_rate_risk",
     "Valyuta riski": "currency_risk",
 }
 CAP_ADEQ_AZ = "Bank kapitalının strukturu və adekvatlığı barədə məlumatlar"

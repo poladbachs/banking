@@ -15,29 +15,19 @@ os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 CORE_REPORTS = [
     "balance",
     "profit_and_loss",
-    "cash_flow",
     "capital_adequacy",
-    "capital_change",
     "credit_risk",
-    "liquidity_risk",
-    "interest_rate_risk",
     "currency_risk",
-    "material_risks"
 ]
 
 SECTION_MAP = {
     "Kapital adekvatlığı": "capital_adequacy",
-    "Maliyyə vəziyyəti haqqında hesabat": "balance",
+    "Maliyyə vəziyyəti haqqında hesabat": "balance_sheet",
     "Mənfəət və zərər hesabatı": "profit_and_loss",
-    "Kapital strukturunda dəyişikliklər haqqında hesabat": "capital_change",
-    "Pul hərəkəti haqqında hesabat": "cash_flow",
 }
 RISK_REPORTS_AZ_TO_EN = {
-    "Faiz riski": "interest_rate_risk",
-    "Likvidlik riski": "liquidity_risk",
     "Kredit riski": "credit_risk",
     "Valyuta riski": "currency_risk",
-    "Əhəmiyyətli risklərin idarə edilməsi": "material_risks"
 }
 VALID_EXTENSIONS = [".pdf", ".xlsx", ".xls"]
 

@@ -12,12 +12,8 @@ CORE_9 = {
     "balance_sheet":     [["maliyy", "veziyyet"]],
     "capital_adequacy":  [["kapital", "adekvat"]],
     "profit_loss":       [["menfeet", "zerer"]],
-    "capital_change":    [["kapital", "struktur", "deyis"]],
-    "cash_flow":         [["pul", "axin"], ["pul", "vesait", "hereket"]],
     "credit_risk":       [["kredit", "risk"]],
-    "liquidity_risk":    [["likvidlik", "risk"]],
     "currency_risk":     [["valyuta", "risk"]],
-    "interest_rate_risk":[["faiz", "risk"]],
 }
 
 def normalize(text):

@@ -12,20 +12,16 @@ REPORT_MAP = {
     "Balans hesabatı": "balance_sheet",
     "Kapitalın strukturu vә adekvatlığı barәdә mәlumat": "capital_adequacy",
     "Mənfəət və zərər haqqında hesabat": "profit_loss",
-    "Kapital strukturunda dəyişikliklər haqqında hesabat": "capital_change",
-    "Pul vəsaitlərinin hərəkəti barədə hesabat": "cash_flow",
 }
 
 RISK_MAP = {
     "Kredit riski": "credit_risk",
-    "Likvidlik riski": "liquidity_risk",
     "Valyuta riski": "currency_risk",
-    "Faiz riski": "interest_rate_risk",
 }
 
 EXPECTED_ORDER = [
-    "balance_sheet", "profit_loss", "cash_flow", "capital_change", "capital_adequacy",
-    "credit_risk", "liquidity_risk", "currency_risk", "interest_rate_risk"
+    "balance_sheet", "profit_loss", "capital_adequacy",
+    "credit_risk", "currency_risk",
 ]
 
 QUARTER_MAP = {

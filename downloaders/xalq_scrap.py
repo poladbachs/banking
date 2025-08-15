@@ -13,25 +13,17 @@ os.makedirs(RAW_DATA_DIR, exist_ok=True)
 os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 
 CORE_REPORTS = [
-    "balance",
-    "capital_change",
+    "balance_sheet",
     "profit_and_loss",
-    "cash_flow",
     "capital_adequacy",
-    "liquidity_risk",
-    "interest_rate_risk",
     "currency_risk",
     "credit_risk"
 ]
 
 REPORT_TYPES = [
-    ("Balans hesabatı", "balance"),
-    ("Kapital dəyişmələri", "capital_change"),
+    ("Balans hesabatı", "balance_sheet"),
     ("Mənfəət və zərər haqqında hesabat", "profit_and_loss"),
-    ("Pul vəsaitinin hərəkəti", "cash_flow"),
     ("Bankın birinci və ikinci dərəcəli kapitalının məbləği və onun elementləri", "capital_adequacy"),
-    ("Likvidlik riski", "liquidity_risk"),
-    ("Faiz riski", "interest_rate_risk"),
     ("Valyuta riski", "currency_risk"),
     ("Kreditlərin, o cümlədən, vaxtı keçmiş kreditlərin iqtisadi sektorlar üzrə bölgüsü", "portfolio_sector"),
     ("Kredit riski", "credit_risk"),

@@ -15,11 +15,7 @@ os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
 REPORT_TYPES = {
     "Balance sheet": "balance_sheet",
     "Profit and loss statement": "profit_and_loss",
-    "Statement of cash flow": "cash_flow",
-    "Statement of changes in equity": "capital_change",
     "Quarterly report on the capital structure and the adequacy": "capital_adequacy",
-    "Interest Rate Risk": "interest_rate_risk",
-    "Liquidity Risk": "liquidity_risk",
     "Credit Risk": "credit_risk",
     "Currency Risk": "currency_risk"
 }
@@ -27,11 +23,7 @@ REPORT_TYPES = {
 CORE_REPORTS = [
     "balance_sheet",
     "profit_and_loss",
-    "cash_flow",
-    "capital_change",
     "capital_adequacy",
-    "interest_rate_risk",
-    "liquidity_risk",
     "credit_risk",
     "currency_risk"
 ]
