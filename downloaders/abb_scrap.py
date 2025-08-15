@@ -1,214 +1,363 @@
+# -*- coding: utf-8 -*-
 import os
-import time
 import re
+import time
 import requests
 import unidecode
 import undetected_chromedriver as uc
+from bs4 import BeautifulSoup
+from collections import defaultdict
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from collections import defaultdict
 
 BASE_URL = "https://abb-bank.az/az/hesabatlar"
 RAW_DATA_DIR = os.path.join("raw_data", "abb_bank")
 os.makedirs(RAW_DATA_DIR, exist_ok=True)
 
+# ---- RANGE: 2020 Q1 -> open-ended future ----
+MIN_YEAR = 2020
+MAX_YEAR = None
+MAX_QUARTER = None
+
+# ---- CANONICAL TYPES (exactly what to keep) ----
 CORE_REPORTS = [
-    "balance_sheet",
-    "profit_and_loss",
-    "capital_adequacy",
-    "portfolio_share",
-    "credit_risk",
-    "currency_risk"
+    "balance_sheet",       # Maliyyə vəziyyəti
+    "profit_and_loss",     # Mənfəət və zərər
+    "capital_adequacy",    # Kapital adekvatlığı
+    "portfolio_share",     # Portfel bölgüsü
+    "credit_risk",         # Kredit riski (təminat üzrə bölgüsü)
+    "currency_risk",       # Valyuta riski
 ]
-SECTION_MAP = {
-    "maliyyə vəziyyəti": "balance_sheet",
-    "mənfəət və zərər": "profit_and_loss",
-    "kapital adekvatlığı": "capital_adequacy",
-    "risk hesabatları": "risk_reports",
+
+# Header labels are flaky; we do NOT filter by headers anymore.
+# We'll expand all sections and classify each PDF by its own text.
+
+ROMAN_TO_Q = {"I": "Q1", "II": "Q2", "III": "Q3", "IV": "Q4"}
+MONTH_TO_Q = {
+    "yanvar": "Q1", "fevral": "Q1", "mart": "Q1",
+    "aprel": "Q2", "may": "Q2", "iyun": "Q2",
+    "iyul": "Q3", "avqust": "Q3", "sentyabr": "Q3",
+    "oktyabr": "Q4", "noyabr": "Q4", "dekabr": "Q4",
 }
-RISK_REPORTS_AZ_TO_EN = {
-    "Kreditlərin, həmçinin vaxtı keçmiş kreditlərin portfeldə payı və onun iqtisadi sektorlar üzrə göstəriciləri": "portfolio_share",
-    "Kredit riski - kreditlərin təminat üzrə bölgüsü": "credit_risk",
-    "Valyuta riski": "currency_risk",
-}
-CAP_ADEQ_AZ = "Bank kapitalının strukturu və adekvatlığı barədə məlumatlar"
 
-def normalize(txt):
-    txt = unidecode.unidecode(txt or "")
-    txt = txt.lower()
-    txt = re.sub(r"\s+", " ", txt)
-    return txt.strip()
+# --- text utilities ---
+def _strip_weird_ws(s: str) -> str:
+    # remove NBSP and zero-width chars that break matching
+    if not s:
+        return ""
+    return re.sub(r"[\u00A0\u200B\u200C\u200D\u202F]", " ", s)
 
-SECTION_MAP_NORM = {normalize(k): v for k, v in SECTION_MAP.items()}
+def normalize(s: str) -> str:
+    t = _strip_weird_ws(s or "")
+    t = unidecode.unidecode(t)
+    t = re.sub(r"\s+", " ", t)
+    return t.strip().lower()
 
-def get_year_period(text):
-    norm = normalize(text)
-    year_match = re.search(r"(\d{4})", norm)
-    year = year_match.group(1) if year_match else ""
-    q_match = re.search(r"\b([iv]+)\s*rub", norm)
-    if q_match:
-        q_roman = q_match.group(1).upper()
-        q_map = {"I": "Q1", "II": "Q2", "III": "Q3", "IV": "Q4"}
-        period = q_map.get(q_roman, q_roman)
-    elif "12 ay" in norm or "illik" in norm:
-        period = "Q4"
-    else:
-        period = "unknown"
-    return year, period
+# --- quarter parsing ---
+def guess_quarter_from_months(text_norm: str):
+    months = [m for m in MONTH_TO_Q.keys() if m in text_norm]
+    if not months:
+        return None
+    last = None
+    last_pos = -1
+    for m in months:
+        p = text_norm.rfind(m)
+        if p > last_pos:
+            last_pos = p
+            last = m
+    return MONTH_TO_Q.get(last)
 
-def file_exists_anywhere(period, fname):
-    # Checks for file in period's subfolder (future-proof, avoids dups)
-    period_dir = os.path.join(RAW_DATA_DIR, period)
-    return os.path.exists(os.path.join(period_dir, fname))
+def extract_year_quarter(label_text: str):
+    norm = normalize(label_text)
+    y = re.search(r"\b(20\d{2})\b", norm)
+    year = int(y.group(1)) if y else None
+
+    q = None
+    m = re.search(r"\b(i{1,3}v?)\s*rub\b", norm)  # "rüb" -> "rub" via unidecode
+    if m:
+        q = ROMAN_TO_Q.get(m.group(1).upper())
+
+    if not q:
+        if re.search(r"\b3\s*ay\b", norm):
+            q = "Q1"
+        elif re.search(r"\b6\s*ay\b", norm) or "yarimillik" in norm:
+            q = "Q2"
+        elif re.search(r"\b9\s*ay\b", norm):
+            q = "Q3"
+        elif re.search(r"\b12\s*ay\b", norm) or "illik" in norm:
+            q = "Q4"
+
+    if not q:
+        q = guess_quarter_from_months(norm)
+
+    return year, q
+
+def in_upper_bound(year: int, quarter: str) -> bool:
+    if MAX_YEAR is None:
+        return True
+    if year < MAX_YEAR:
+        return True
+    if year > MAX_YEAR:
+        return False
+    if MAX_QUARTER is None:
+        return True
+    order = {"Q1":1,"Q2":2,"Q3":3,"Q4":4}
+    return order.get(quarter, 0) <= order.get(MAX_QUARTER, 4)
+
+def ensure_period_dir(year: int, quarter: str):
+    period = f"{year}_{quarter}"
+    path = os.path.join(RAW_DATA_DIR, period)
+    os.makedirs(path, exist_ok=True)
+    return period, path
+
+def already_downloaded(period, fname):
+    return os.path.exists(os.path.join(RAW_DATA_DIR, period, fname))
+
+# --- classify by link text ONLY (don’t trust headers) ---
+def detect_report_type(context_norm: str):
+    """
+    Decide which of the 6 canonical types this PDF is.
+    Return one of CORE_REPORTS or None.
+    """
+    # 1) Financial statements: exact phrases appear in link blocks
+    if ("maliyye veziyyeti" in context_norm) or ("maliyye veziyyeti haqqinda" in context_norm):
+        return "balance_sheet"
+    # include the unicode version too (normalize() makes ASCII, but context might be raw in some cases)
+    if "maliyyə vəziyyəti" in _strip_weird_ws(context_norm):
+        return "balance_sheet"
+
+    if ("menfeet ve zerer" in context_norm) or ("menfeet ve zerer haqqinda" in context_norm):
+        return "profit_and_loss"
+    if "mənfəət və zərər" in _strip_weird_ws(context_norm):
+        return "profit_and_loss"
+
+    # 2) Capital adequacy
+    if "kapital adekvatligi" in context_norm or "adekvatliq" in context_norm:
+        return "capital_adequacy"
+
+    # 3) Risk subtypes we want (credit, currency, portfolio) — explicitly exclude interest rate risk
+    if "faiz riski" in context_norm:
+        return None  # skip interest rate risk entirely
+
+    # Credit risk (be generous; ABB uses multiple wordings)
+    if ("kredit riski" in context_norm) or ("kreditlerin" in context_norm) or ("kreditlerin teminat uzre bolgusu" in context_norm):
+        # Prefer only items that look like "Kredit riski - kreditlərin təminat üzrə bölgüsü"
+        # but allow looser forms too
+        return "credit_risk"
+
+    # Currency risk
+    if ("valyuta riski" in context_norm) or ("xarici valyuta" in context_norm):
+        return "currency_risk"
+
+    # Portfolio share / segmentation
+    if ("portfel" in context_norm) or ("portfolio" in context_norm) or ("iqtisadi bolgu" in context_norm) or ("bolgusu" in context_norm):
+        return "portfolio_share"
+
+    return None
+
+# --- DOM helpers ---
+def find_section_body_for_header(header_el):
+    """Walk forward siblings until the body (class contains 'ac-a') or next header."""
+    siblings = header_el.find_elements(By.XPATH, "following-sibling::*")
+    for sib in siblings:
+        cls = (sib.get_attribute("class") or "").lower()
+        tag = sib.tag_name.lower()
+        if "ac-a" in cls:
+            return sib
+        if tag == "h4" and "ac-q" in cls:
+            break
+    return None
+
+def pull_pdf_links_from_section_html(section_html: str):
+    """Return list[(href, context_text)] for each .pdf inside a section body."""
+    soup = BeautifulSoup(section_html, "html.parser")
+    out = []
+    for a in soup.find_all("a", href=True):
+        href = a["href"].strip()
+        if not href.lower().endswith(".pdf"):
+            continue
+        # context: prefer outer card text, else link text
+        parent = a
+        context = ""
+        hops = 0
+        while parent and hops < 7:
+            text = parent.get_text(" ", strip=True) or ""
+            # take the longest reasonable text chunk
+            if len(text) > len(context):
+                context = text
+            parent = parent.parent
+            hops += 1
+        if not context:
+            context = a.get_text(" ", strip=True)
+        out.append((href, context))
+    return out
 
 def main():
+    # --- Selenium (uc) to load the hub and get session cookies ---
     options = uc.ChromeOptions()
+    options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
-    options.add_argument("--headless")
     options.add_argument("--disable-gpu")
-    options.add_argument("--no-sandbox")
     driver = uc.Chrome(options=options)
     driver.get(BASE_URL)
-    time.sleep(3)
+    time.sleep(2)
 
+    # best-effort: accept cookies / close overlays
     try:
-        onesignal_close = driver.find_element(By.CSS_SELECTOR, "#onesignal-slidedown-dialog button.onesignal-slidedown-cancel-button")
-        onesignal_close.click()
-        time.sleep(1)
+        for xp in [
+            "//button[contains(.,'Qəbul et')]",
+            "//button[contains(.,'Accept')]",
+            "//button[contains(.,'Bağla')]",
+        ]:
+            els = driver.find_elements(By.XPATH, xp)
+            if els:
+                els[0].click()
+                time.sleep(0.7)
+                break
     except Exception:
         pass
 
+    # click "Digər hesabatlar" to reveal more blocks
     try:
-        accept_btn = driver.find_element(By.XPATH, "//button[contains(text(), 'Qəbul et')]")
-        accept_btn.click()
+        other = driver.find_element(By.XPATH, "//span[contains(.,'Digər hesabatlar') or contains(.,'Diger hesabatlar')]")
+        other.click()
+        time.sleep(1.2)
     except Exception:
         pass
-    time.sleep(1)
 
+    # Scroll to mount everything
     try:
-        other_reports_btn = driver.find_element(By.XPATH, "//span[contains(text(),'Digər hesabatlar')]")
-        other_reports_btn.click()
-        time.sleep(2)
-    except Exception as e:
-        print(f"[ERROR] Could not click Other reports tab: {e}")
-        driver.quit()
-        return
+        last_h = 0
+        for _ in range(8):
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(0.6)
+            h = driver.execute_script("return document.body.scrollHeight;")
+            if h == last_h:
+                break
+            last_h = h
+    except Exception:
+        pass
 
+    # mirror cookies to requests for faster, reliable PDF download
     session = requests.Session()
-    for cookie in driver.get_cookies():
-        session.cookies.set(cookie['name'], cookie['value'])
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Referer": BASE_URL
-    }
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/124 Safari/537.36",
+        "Referer": BASE_URL,
+    })
+    for c in driver.get_cookies():
+        session.cookies.set(c["name"], c["value"])
 
-    section_headers = driver.find_elements(By.CSS_SELECTOR, "h4.ac-q")
-    print(f"Found {len(section_headers)} report sections.")
+    headers = driver.find_elements(By.CSS_SELECTOR, "h4.ac-q")
+    print(f"Found {len(headers)} report sections.")
 
-    quarter_files = defaultdict(set)  # {period: set([report_types])}
-    downloaded_keys = set()
-    for section in section_headers:
-        section_name_az = section.text.strip()
-        section_name_az_norm = normalize(section_name_az)
-        if section_name_az_norm not in SECTION_MAP_NORM:
-            continue
-        section_name_en = SECTION_MAP_NORM[section_name_az_norm]
-        print(f"\nSection: {section_name_en}")
+    quarter_files = defaultdict(set)
+    total_new = 0
 
+    for i, h in enumerate(headers, 1):
+        title_raw = (h.text or "").strip()
+        print(f"\n[{i}] header: {title_raw}")
+
+        # Always expand — regardless of header text
         try:
-            if not section.get_attribute("aria-expanded") or section.get_attribute("aria-expanded") == "false":
-                driver.execute_script("arguments[0].scrollIntoView();", section)
-                ActionChains(driver).move_to_element(section).perform()
-                section.click()
-                time.sleep(1.0)
+            if h.get_attribute("aria-expanded") in (None, "false"):
+                driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", h)
+                ActionChains(driver).move_to_element(h).perform()
+                h.click()
+                time.sleep(0.9)
         except Exception:
+            pass
+
+        body = find_section_body_for_header(h)
+        if not body:
+            print(f"    [WARN] no section body found.")
             continue
 
-        cards = section.find_elements(By.XPATH, "./following-sibling::div[1]//a[contains(@href,'.pdf')]")
-        print(f"  Found {len(cards)} cards.")
+        items = pull_pdf_links_from_section_html(body.get_attribute("innerHTML") or "")
+        print(f"    links: {len(items)} PDF(s)")
 
-        for card in cards:
-            href = card.get_attribute("href")
+        for href, context in items:
+            if href.startswith("/"):
+                href = "https://abb-bank.az" + href
+
+            # try parse period
+            year, quarter = extract_year_quarter(context)
+            if (year is None) or (quarter is None):
+                # parse from filename if needed
+                fn_norm = normalize(os.path.basename(href))
+                y = re.search(r"(20\d{2})", fn_norm)
+                if y and not year:
+                    year = int(y.group(1))
+                r = re.search(r"\b(i{1,3}v?)\b", fn_norm)
+                if r and not quarter:
+                    quarter = ROMAN_TO_Q.get(r.group(1).upper())
+                if not quarter:
+                    if re.search(r"[_-]3\b", fn_norm): quarter = "Q1"
+                    elif re.search(r"[_-]6\b", fn_norm): quarter = "Q2"
+                    elif re.search(r"[_-]9\b", fn_norm): quarter = "Q3"
+                    elif re.search(r"[_-]12\b", fn_norm): quarter = "Q4"
+
+            if (year is None) or (quarter is None):
+                print(f"      [SKIP] no year/quarter -> {context[:120]} ...")
+                continue
+
+            if year < MIN_YEAR or not in_upper_bound(year, quarter):
+                print(f"      [SKIP] outside lower bound: {year} {quarter}")
+                continue
+
+            # Decide the exact type from the link text itself
+            context_norm = normalize(context)
+            rtype = detect_report_type(context_norm)
+
+            if rtype not in CORE_REPORTS:
+                # Explicitly refuse to save interest rate risk or generic 'risk reports'
+                # or cash flow etc.
+                # Uncomment the next line to debug what we skipped:
+                # print(f"      [SKIP] not in CORE_REPORTS -> {context[:120]} ...")
+                continue
+
+            period, pdir = ensure_period_dir(year, quarter)
+            save_name = f"{rtype}_{year}_{quarter}.pdf"
+            if already_downloaded(period, save_name):
+                quarter_files[period].add(rtype)
+                continue
+
             try:
-                period_elem = card.find_element(By.XPATH, "../../p[1]")
-                period_text = period_elem.text.strip()
-            except Exception:
-                period_text = card.text.strip()
-            year, period = get_year_period(period_text)
-            if not year or not period or period == "unknown" or int(year) < 2020:
-                continue
-            ext = href.split('.')[-1].split('?')[0].lower()
-            if ext != 'pdf':
-                continue
-
-            report_type = None
-            do_download = False
-
-            if section_name_en == "capital_adequacy":
-                if CAP_ADEQ_AZ in period_text:
-                    report_type = section_name_en
-                    do_download = True
-            elif section_name_en == "risk_reports":
-                for az_title, en_title in RISK_REPORTS_AZ_TO_EN.items():
-                    if period_text.strip().startswith(az_title):
-                        key = (en_title, year, period)
-                        if key in downloaded_keys:
-                            do_download = False
-                            break
-                        downloaded_keys.add(key)
-                        report_type = en_title
-                        do_download = True
-                        break
-            else:
-                report_type = section_name_en
-                do_download = True
-
-            if not do_download or not report_type:
-                continue
-
-            quarter_folder = f"{year}_{period}"
-            period_dir = os.path.join(RAW_DATA_DIR, quarter_folder)
-            os.makedirs(period_dir, exist_ok=True)
-            save_name = f"{report_type}_{year}_{period}.pdf"
-            fpath = os.path.join(period_dir, save_name)
-            if file_exists_anywhere(quarter_folder, save_name):
-                print(f"[SKIP] Already exists in {quarter_folder}: {save_name}")
-                quarter_files[quarter_folder].add(report_type)
-                continue
-
-            print(f"    Downloading: {quarter_folder}/{save_name}")
-            try:
-                r = session.get(href, headers=headers, timeout=20)
-                if not r.content.startswith(b'%PDF-'):
-                    print(f"    [!] Not a real PDF: {href}")
-                    continue
-                with open(fpath, "wb") as out:
-                    out.write(r.content)
-                quarter_files[quarter_folder].add(report_type)
+                print(f"      ↓ {period}/{save_name}")
+                dr = session.get(href, timeout=50, allow_redirects=True)
+                ok_pdf = (dr.status_code == 200 and (
+                    dr.content.startswith(b"%PDF") or
+                    "application/pdf" in (dr.headers.get("Content-Type","").lower())
+                ))
+                if ok_pdf:
+                    with open(os.path.join(pdir, save_name), "wb") as f:
+                        f.write(dr.content)
+                    total_new += 1
+                    quarter_files[period].add(rtype)
+                else:
+                    print(f"        [WARN] not a PDF or HTTP {dr.status_code}: {href}")
             except Exception as e:
-                print(f"    [!] Download error: {e}")
+                print(f"        [ERR] {e}")
 
     driver.quit()
 
-    # Scan already existing files in subfolders
-    for subdir in os.listdir(RAW_DATA_DIR):
-        period_path = os.path.join(RAW_DATA_DIR, subdir)
-        if not os.path.isdir(period_path):
+    # include any preexisting files in the summary
+    for sub in os.listdir(RAW_DATA_DIR):
+        p = os.path.join(RAW_DATA_DIR, sub)
+        if not os.path.isdir(p):
             continue
-        for fname in os.listdir(period_path):
-            m = re.match(r"([a-z_]+)_(\d{4})_(Q[1-4])\.pdf", fname)
+        for fname in os.listdir(p):
+            m = re.match(r"([a-z_]+)_(20\d{2})_(Q[1-4])\.pdf$", fname)
             if m:
-                report_type, year, quarter = m.group(1), m.group(2), m.group(3)
-                key = f"{year}_{quarter}"
-                quarter_files[key].add(report_type)
+                quarter_files[sub].add(m.group(1))
 
-    print("\n=== SUMMARY OF MISSING REPORTS PER QUARTER ===")
+    print("\n=== SUMMARY OF MISSING REPORTS PER QUARTER (>= {0}) ===".format(MIN_YEAR))
     for quarter in sorted(quarter_files.keys()):
         got = quarter_files[quarter]
         miss = [k for k in CORE_REPORTS if k not in got]
         if miss:
-            print(f"{quarter}: missing {miss}")
-    print("Done.\nAll PDFs in raw_data/abb_bank/<year>_<quarter>/")
+            print(f"  {quarter}: missing {miss}")
+    print(f"\nDone. New files: {total_new}")
+    print("All PDFs in raw_data/abb_bank/<year>_<quarter>/")
 
 if __name__ == "__main__":
     main()
