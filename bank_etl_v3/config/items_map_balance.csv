@@ -1,0 +1,38 @@
+code,az_label,item_en,master_group
+1,Aktivlər,Assets,ASSETS
+1.1,Nağd pul vəsaitləri və ekvivalentləri,Cash and equivalents,ASSETS
+1.2,Ticarət və investisiya qiymətli kağızları,Trading & investment securities,ASSETS
+1.3,Banklarda və digər maliyyə institutlarındakı depozitlər,Deposits with banks & other FIs,ASSETS
+1.4,Banklar və digər maliyyə institutlarına verilən kreditlər,Loans to banks & other FIs,ASSETS
+1.5,Müştərilərə verilmiş kreditlər,Loans to customers,ASSETS
+1.5.1,istehlak kreditləri,Consumer loans,ASSETS
+1.5.2,biznes kreditləri,Business loans,ASSETS
+1.5.3,daşınmaz əmlak kreditləri,Real estate loans,ASSETS
+1.5.4,digər kreditlər,Other loans,ASSETS
+1.5.5,Mümkün zərərlər üçün yaradılan məqsədli ehtiyat,Provision for loan losses,ASSETS
+1.5.6,Müştərilərə verilmiş kreditlər (xalis),Loans to customers (net),ASSETS
+1.6,Əmlak və avadanlıqlar,Property & equipment,ASSETS
+1.7,Qeyri-maddi aktivlər,Intangible assets,ASSETS
+1.8,Təxirə salınmış vergi aktivləri,Deferred tax assets,ASSETS
+1.9,Balansdankənar aktivlər üzrə ehtiyat,Off-balance assets provisions,ASSETS
+1.10,Digər aktivlər,Other assets,ASSETS
+2,Öhdəliklər,Liabilities,LIABILITY
+2.1,Depozitlər,Deposits,LIABILITY
+2.1.1,fiziki şəxslərin depozitləri,Deposits from individuals,LIABILITY
+2.1.2,hüquqi şəxslərin depozitləri,Deposits from legal entities,LIABILITY
+2.2,Mərkəzi bank və dövlət fondları qarşısında öhdəliklər,Due to central bank & state funds,LIABILITY
+2.3,Kredit təşkilatları və digər maliyyə institutları qarşısında öhdəliklər,Due to credit institutions & other FIs,LIABILITY
+2.4,Borc qiymətli kağızları,Debt securities,LIABILITY
+2.5,Cari vergi öhdəlikləri,Current tax liabilities,LIABILITY
+2.6,Təxirə salınmış vergi öhdəliyi,Deferred tax liabilities,LIABILITY
+2.7,Subordinasiya borc öhdəlikləri,Subordinated debt,LIABILITY
+2.8,Digər öhdəliklər,Other liabilities,LIABILITY
+3,Kapital,Equity,EQUITY
+3.1,Səhmdar kapitalı,Share capital,EQUITY
+3.2,Səhmin qiymətinin dəyişməsindən gəlir (zərər),Share premium / revaluation,EQUITY
+3.3,Bölüşdürülməmiş mənfəət,Retained earnings,EQUITY
+3.4,Ümumi ehtiyatlar,General reserves,EQUITY
+3.4.1,kreditlər və digər tələblər üzrə ehtiyatlar,General reserves - credit risk,EQUITY
+3.4.2,əsas vəsaitlərin qiymətləndirilməsindən ehtiyatlar,General reserves - revaluation,EQUITY
+3.4.3,digər ümumi ehtiyatlar,Other general reserves,EQUITY
+4,Cəmi öhdəliklər və kapital,Total liabilities & equity,LIABILITY+EQUITY

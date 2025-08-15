@@ -1,0 +1,31 @@
+az,en
+Aktivlər,Assets
+Öhdəliklər,Liabilities
+Kapital,Equity
+"Cəmi öhdəliklər və kapital",Liabilities+Equity
+Valyuta,Currency
+Valyuta riski,Currency Risk
+Kreditlər,Loans
+Depozitlər,Deposits
+Digər,Other
+Məbləğ,Amount
+"Hesabat dövrü",Reporting period
+Cari,Current
+"Ötən ilin sonu",Prior year end
+Yanvar,January
+Fevral,February
+Mart,March
+Aprel,April
+May,May
+İyun,June
+İyul,July
+Avqust,August
+Sentyabr,September
+Oktyabr,October
+Noyabr,November
+Dekabr,December
+"31-60 gün","31-60 days"
+"61-90 gün","61-90 days"
+"91+ gün","91+ days"
+"Pay % ümumi aktiv+passiv","Share % Total Assets+Liabilities"
+"Pay % kredit+depozit","Share % in Total Loan + Deposit"

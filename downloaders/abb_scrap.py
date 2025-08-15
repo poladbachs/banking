@@ -57,7 +57,7 @@ def get_year_period(text):
         q_map = {"I": "Q1", "II": "Q2", "III": "Q3", "IV": "Q4"}
         period = q_map.get(q_roman, q_roman)
     elif "12 ay" in norm or "illik" in norm:
-        period = "12m"
+        period = "Q4"
     else:
         period = "unknown"
     return year, period
@@ -202,7 +202,7 @@ def main():
         if not os.path.isdir(period_path):
             continue
         for fname in os.listdir(period_path):
-            m = re.match(r"([a-z_]+)_(\d{4})_(Q[1-4]|12m)\.pdf", fname)
+            m = re.match(r"([a-z_]+)_(\d{4})_(Q[1-4])\.pdf", fname)
             if m:
                 report_type, year, quarter = m.group(1), m.group(2), m.group(3)
                 key = f"{year}_{quarter}"

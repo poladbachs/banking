@@ -1,0 +1,10 @@
+balance_sheet:
+  sheet_keywords: ["balans", "balance", "financial position"]
+profit_and_loss:
+  sheet_keywords: ["mənfəət", "ziyan", "profit", "loss"]
+capital_adequacy:
+  sheet_keywords: ["kapital", "adequacy"]
+credit_risk:
+  sheet_keywords: ["kredit", "loan", "risk", "credit"]
+currency_risk:
+  sheet_keywords: ["valyuta", "currency"]
